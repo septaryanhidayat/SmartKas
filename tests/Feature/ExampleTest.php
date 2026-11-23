@@ -17,4 +17,6 @@ it('allows authenticated users to view dashboard', function () {
     $response = $this->actingAs($user)->get('/dashboard');
     $response->assertStatus(200);
     $response->assertSee('Dashboard Ringkasan Keuangan');
+    $response->assertSee('Sughesti Wulandari');
+    $response->assertSee('GENERASI ROBBANI');
 });

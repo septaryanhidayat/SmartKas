@@ -18,7 +18,7 @@
     <div class="header">
         <div class="title">BUKU KAS UMUM (MUTASI KAS)</div>
         <div class="meta">
-            Yayasan Pendidikan Islam Terpadu | {{ $report['cash_account']->name ?? 'Seluruh Akun Kas' }}
+            Yayasan Generasi Robbani Sumatera Selatan | {{ $report['cash_account']->name ?? 'Seluruh Akun Kas' }}
             <br>Periode: {{ $startDate->translatedFormat('d F Y') }} s/d {{ $endDate->translatedFormat('d F Y') }}
         </div>
     </div>

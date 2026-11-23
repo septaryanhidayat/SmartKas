@@ -39,7 +39,7 @@ class WhatsAppGatewayService
 
         $message = <<<TEXT
 *BUKTI PEMBAYARAN - {$unit->name}*
-Yayasan Pendidikan Islam Terpadu
+Yayasan Generasi Robbani Sumatera Selatan
 ---------------------------------------------
 Assalamu'alaikum Wr. Wb.
 Yth. Orang Tua / Wali dari:

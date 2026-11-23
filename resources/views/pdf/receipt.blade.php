@@ -117,7 +117,7 @@
         <table class="kop-table">
             <tr>
                 <td style="width: 65%;">
-                    <div class="foundation-name">YAYASAN PENDIDIKAN ISLAM TERPADU</div>
+                    <div class="foundation-name">YAYASAN GENERASI ROBBANI SUMATERA SELATAN</div>
                     <div class="unit-name">{{ $unit->name }}</div>
                     <div class="unit-address">{{ $unit->address ?? 'Kompleks Pendidikan SIT' }} | Telp: {{ $unit->phone ?? '-' }}</div>
                 </td>

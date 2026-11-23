@@ -18,7 +18,15 @@ class AuthController extends Controller
             return redirect()->route('dashboard');
         }
 
-        $demoUsers = User::with('unit')->get();
+        $demoUsers = User::with(['unit', 'roles'])->orderByRaw("CASE 
+            WHEN email = 'superadmin@sit.sch.id' THEN 1
+            WHEN email = 'bendahara@sit.sch.id' THEN 2
+            WHEN email = 'admin.yayasan@sit.sch.id' THEN 3
+            WHEN email LIKE 'admin.tkit%' THEN 4
+            WHEN email LIKE 'admin.sdit%' THEN 5
+            WHEN email LIKE 'admin.smpit%' THEN 6
+            WHEN email LIKE 'admin.smait%' THEN 7
+            ELSE 8 END")->get();
 
         return view('auth.login', compact('demoUsers'));
     }

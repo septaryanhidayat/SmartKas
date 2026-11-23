@@ -20,7 +20,7 @@
     <div class="header">
         <div class="title">LAPORAN SURPLUS / DEFISIT (LABA RUGI)</div>
         <div class="meta">
-            {{ $report['unit'] ? $report['unit']->name : 'KONSOLIDASI SELURUH YAYASAN PENDIDIKAN SIT' }}
+            {{ $report['unit'] ? $report['unit']->name : 'KONSOLIDASI YAYASAN GENERASI ROBBANI SUMATERA SELATAN' }}
             <br>Periode: {{ $report['start_date']->translatedFormat('d F Y') }} s/d {{ $report['end_date']->translatedFormat('d F Y') }}
         </div>
     </div>

@@ -110,107 +110,152 @@ class DatabaseSeeder extends Seeder
             'export-reports',
         ]);
 
-        // 3. Create Units
+        // 3. Create Units: Yayasan Generasi Robbani Sumatera Selatan & 4 Units
         $yayasan = Unit::create([
             'code' => UnitCode::YAYASAN,
-            'name' => 'Yayasan Pendidikan Islam Terpadu',
+            'name' => 'Yayasan Generasi Robbani Sumatera Selatan',
             'level' => UnitLevel::FOUNDATION,
-            'address' => 'Jl. Pendidikan Islam No. 1, Jakarta Selatan',
-            'phone' => '021-7890123',
-            'principal_name' => 'Dr. H. Ahmad Dahlan, M.Pd.',
+            'address' => 'Jl. Pangeran Ayin No. 88, Sako, Palembang, Sumatera Selatan',
+            'phone' => '0711-820123',
+            'principal_name' => 'Sughesti Wulandari, S.Pd',
             'is_active' => true,
         ]);
 
         $tkit = Unit::create([
             'code' => UnitCode::TKIT,
-            'name' => 'KB/TKIT Nurul Fikri',
+            'name' => 'KB/TKIT Robbani',
             'level' => UnitLevel::TK,
-            'address' => 'Jl. Pendidikan Islam No. 1A, Jakarta Selatan',
-            'phone' => '021-7890124',
-            'principal_name' => 'Ustadzah Siti Aminah, S.Pd.I.',
+            'address' => 'Jl. Pangeran Ayin No. 88A, Sako, Palembang, Sumatera Selatan',
+            'phone' => '0711-820124',
+            'principal_name' => 'Ustadzah Rojanah, S.E.',
             'is_active' => true,
         ]);
 
         $sdit = Unit::create([
             'code' => UnitCode::SDIT,
-            'name' => 'SDIT Nurul Fikri',
+            'name' => 'SDIT Robbani',
             'level' => UnitLevel::SD,
-            'address' => 'Jl. Pendidikan Islam No. 1B, Jakarta Selatan',
-            'phone' => '021-7890125',
-            'principal_name' => 'Ustadz Muhammad Ridwan, S.Pd.',
+            'address' => 'Jl. Pangeran Ayin No. 88B, Sako, Palembang, Sumatera Selatan',
+            'phone' => '0711-820125',
+            'principal_name' => 'Ustadzah Risma, S.Pd',
             'is_active' => true,
         ]);
 
         $smpit = Unit::create([
             'code' => UnitCode::SMPIT,
-            'name' => 'SMPIT Nurul Fikri',
+            'name' => 'SMPIT Robbani',
             'level' => UnitLevel::SMP,
-            'address' => 'Jl. Pendidikan Islam No. 1C, Jakarta Selatan',
-            'phone' => '021-7890126',
-            'principal_name' => 'Ustadz Abdullah Faqih, M.Pd.',
+            'address' => 'Jl. Pangeran Ayin No. 88C, Sako, Palembang, Sumatera Selatan',
+            'phone' => '0711-820126',
+            'principal_name' => 'Ustadz Ahmad Zaki, M.Pd.',
             'is_active' => true,
         ]);
 
         $smait = Unit::create([
             'code' => UnitCode::SMAIT,
-            'name' => 'SMAIT Nurul Fikri',
+            'name' => 'SMAIT Robbani',
             'level' => UnitLevel::SMA,
-            'address' => 'Jl. Pendidikan Islam No. 1D, Jakarta Selatan',
-            'phone' => '021-7890127',
+            'address' => 'Jl. Pangeran Ayin No. 88D, Sako, Palembang, Sumatera Selatan',
+            'phone' => '0711-820127',
             'principal_name' => 'Ustadz Hasan Basri, Lc., M.A.',
             'is_active' => true,
         ]);
 
-        // 4. Create Demo Users
+        // 4. Create Official Personnel Users (Official Names requested by User)
         $defaultPassword = Hash::make('password123');
 
+        // Ketua Yayasan: Sughesti Wulandari, S.Pd (Superadmin)
         $superadmin = User::create([
             'unit_id' => null,
-            'name' => 'Ketua Yayasan (Superadmin)',
-            'email' => 'superadmin@sit.sch.id',
+            'name' => 'Sughesti Wulandari, S.Pd',
+            'email' => 'superadmin@sit.sch.id', // Keep alias email for tests while displaying official title
             'password' => $defaultPassword,
-            'phone' => '628111000001',
+            'phone' => '628127100001',
             'is_active' => true,
         ]);
         $superadmin->assignRole($superadminRole);
 
+        // Bendahara Yayasan: Dessy Aprianty, S.E.
         $treasurer = User::create([
             'unit_id' => null,
-            'name' => 'Hj. Maryam (Bendahara Yayasan)',
+            'name' => 'Dessy Aprianty, S.E.',
             'email' => 'bendahara@sit.sch.id',
             'password' => $defaultPassword,
-            'phone' => '628111000002',
+            'phone' => '628127100002',
             'is_active' => true,
         ]);
         $treasurer->assignRole($treasurerRole);
 
-        // Unit Users (Principal and Finance Admin)
-        $unitsConfig = [
-            ['unit' => $tkit, 'kepsek_email' => 'kepsek.tkit@sit.sch.id', 'admin_email' => 'admin.tkit@sit.sch.id', 'code' => 'TKIT'],
-            ['unit' => $sdit, 'kepsek_email' => 'kepsek.sdit@sit.sch.id', 'admin_email' => 'admin.sdit@sit.sch.id', 'code' => 'SDIT'],
-            ['unit' => $smpit, 'kepsek_email' => 'kepsek.smpit@sit.sch.id', 'admin_email' => 'admin.smpit@sit.sch.id', 'code' => 'SMPIT'],
-            ['unit' => $smait, 'kepsek_email' => 'kepsek.smait@sit.sch.id', 'admin_email' => 'admin.smait@sit.sch.id', 'code' => 'SMAIT'],
+        // Admin Yayasan (Pusat Pembayaran Siswa): Anis Monica, S.H.
+        $adminYayasan = User::create([
+            'unit_id' => null, // Pusat Yayasan: can access and receive payments across all units
+            'name' => 'Anis Monica, S.H.',
+            'email' => 'admin.yayasan@sit.sch.id',
+            'password' => $defaultPassword,
+            'phone' => '628127100003',
+            'is_active' => true,
+        ]);
+        $adminYayasan->assignRole($financeAdminRole);
+        $adminYayasan->givePermissionTo('view-all-units');
+
+        // Unit Users (Principals and Designated Unit Admins)
+        // Admin unit TK: Rojanah, S.E.
+        // Admin unit SD: Risma, S.Pd
+        // Admin unit SMP: Adelia Jesika, S.Pd
+        $unitAdminsConfig = [
+            [
+                'unit' => $tkit,
+                'admin_name' => 'Rojanah, S.E.',
+                'admin_email' => 'admin.tkit@sit.sch.id',
+                'kepsek_name' => 'Kepala Sekolah TKIT Robbani',
+                'kepsek_email' => 'kepsek.tkit@sit.sch.id',
+                'phone_admin' => '628127100010',
+            ],
+            [
+                'unit' => $sdit,
+                'admin_name' => 'Risma, S.Pd',
+                'admin_email' => 'admin.sdit@sit.sch.id',
+                'kepsek_name' => 'Kepala Sekolah SDIT Robbani',
+                'kepsek_email' => 'kepsek.sdit@sit.sch.id',
+                'phone_admin' => '628127100020',
+            ],
+            [
+                'unit' => $smpit,
+                'admin_name' => 'Adelia Jesika, S.Pd',
+                'admin_email' => 'admin.smpit@sit.sch.id',
+                'kepsek_name' => 'Kepala Sekolah SMPIT Robbani',
+                'kepsek_email' => 'kepsek.smpit@sit.sch.id',
+                'phone_admin' => '628127100030',
+            ],
+            [
+                'unit' => $smait,
+                'admin_name' => 'Admin Keuangan SMAIT Robbani',
+                'admin_email' => 'admin.smait@sit.sch.id',
+                'kepsek_name' => 'Kepala Sekolah SMAIT Robbani',
+                'kepsek_email' => 'kepsek.smait@sit.sch.id',
+                'phone_admin' => '628127100040',
+            ],
         ];
 
-        foreach ($unitsConfig as $cfg) {
+        foreach ($unitAdminsConfig as $cfg) {
             $u = $cfg['unit'];
 
             $kepsek = User::create([
                 'unit_id' => $u->id,
-                'name' => "Kepala Sekolah {$cfg['code']}",
+                'name' => $cfg['kepsek_name'],
                 'email' => $cfg['kepsek_email'],
                 'password' => $defaultPassword,
-                'phone' => "6281200000{$u->id}1",
+                'phone' => "62812710099{$u->id}",
                 'is_active' => true,
             ]);
             $kepsek->assignRole($principalRole);
 
             $admin = User::create([
                 'unit_id' => $u->id,
-                'name' => "Admin Keuangan {$cfg['code']}",
+                'name' => $cfg['admin_name'],
                 'email' => $cfg['admin_email'],
                 'password' => $defaultPassword,
-                'phone' => "6281200000{$u->id}2",
+                'phone' => $cfg['phone_admin'],
                 'is_active' => true,
             ]);
             $admin->assignRole($financeAdminRole);
@@ -287,8 +332,8 @@ class DatabaseSeeder extends Seeder
 
         // 8. Create Discounts
         $beasiswaYatim = Discount::create([
-            'unit_id' => null, // Berlaku seluruh unit
-            'name' => 'Beasiswa Yatim/Piatu 100%',
+            'unit_id' => null, // Applies to all units
+            'name' => 'Beasiswa Yatim & Dhuafa 100%',
             'type' => DiscountType::PERCENTAGE,
             'value' => 100,
             'is_active' => true,
@@ -314,7 +359,7 @@ class DatabaseSeeder extends Seeder
         $cashAccounts = [
             // Yayasan Central Accounts
             ['unit_id' => null, 'name' => 'BSI Rekening Yayasan Operasional', 'type' => CashAccountType::BANK, 'acc' => '7142000101', 'bank' => 'Bank Syariah Indonesia (BSI)', 'balance' => 250000000],
-            ['unit_id' => null, 'name' => 'Bank Muamalat Yayasan Penampung', 'type' => CashAccountType::BANK, 'acc' => '3010099881', 'bank' => 'Bank Muamalat', 'balance' => 150000000],
+            ['unit_id' => null, 'name' => 'Bank Muamalat Penampung SPP', 'type' => CashAccountType::BANK, 'acc' => '3010099881', 'bank' => 'Bank Muamalat', 'balance' => 150000000],
             ['unit_id' => null, 'name' => 'Brankas Kas Tunai Yayasan', 'type' => CashAccountType::CASH, 'acc' => null, 'bank' => null, 'balance' => 20000000],
 
             // TKIT
@@ -365,7 +410,7 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-        // 11. Create Sample Students
+        // 11. Create Realistic Sample Students
         $studentsData = [
             // TKIT
             [

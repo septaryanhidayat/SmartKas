@@ -3,141 +3,303 @@
 @section('content')
 <div class="space-y-6">
 
-    <!-- Header & Unit Filter -->
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-            <h2 class="text-2xl font-black text-slate-900 tracking-tight">Dashboard Ringkasan Keuangan</h2>
-            <p class="text-xs text-slate-500 mt-0.5">Arus kas, penerimaan pembayaran SPP, realisasi belanja & tunggakan.</p>
-        </div>
+    <!-- Executive Greeting & Unit Selector Bar -->
+    <div class="bg-white rounded-3xl p-6 sm:p-7 border border-slate-200/90 shadow-xs relative overflow-hidden">
+        <!-- Subtle Background Glow -->
+        <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-emerald-500/5 rounded-full blur-2xl pointer-events-none"></div>
 
-        @if(!auth()->user()->unit_id)
-            <!-- Unit Filter for Superadmin & Treasurer -->
-            <form method="GET" action="{{ route('dashboard') }}" class="flex items-center gap-2">
-                <label class="text-xs font-bold text-slate-600">Unit Sekolah:</label>
-                <select name="unit_id" onchange="this.form.submit()" class="text-xs font-medium rounded-xl border border-slate-200 bg-white px-3 py-2 focus:ring-2 focus:ring-emerald-500 shadow-2xs">
-                    <option value="">-- Seluruh Yayasan (Konsolidasi) --</option>
-                    @foreach($units as $u)
-                        <option value="{{ $u->id }}" {{ (string)$unitId === (string)$u->id ? 'selected' : '' }}>
-                            {{ $u->name }} ({{ $u->code->value }})
-                        </option>
-                    @endforeach
-                </select>
-            </form>
-        @endif
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5 relative z-10">
+            <div>
+                @php
+                    $roleSubtitle = match(auth()->user()->email) {
+                        'superadmin@sit.sch.id' => 'Ketua Yayasan Generasi Robbani • Pengawas Utama 4 Unit Sekolah',
+                        'bendahara@sit.sch.id' => 'Bendahara Yayasan • Otorisator Pengeluaran & Kas Terpusat',
+                        'admin.yayasan@sit.sch.id' => 'Admin Yayasan • Pusat Pembayaran Siswa Seluruh Unit',
+                        'admin.tkit@sit.sch.id' => 'Admin Keuangan • Unit KB/TKIT Robbani',
+                        'admin.sdit@sit.sch.id' => 'Admin Keuangan • Unit SDIT Robbani',
+                        'admin.smpit@sit.sch.id' => 'Admin Keuangan • Unit SMPIT Robbani',
+                        'admin.smait@sit.sch.id' => 'Admin Keuangan • Unit SMAIT Robbani',
+                        default => (auth()->user()->unit ? 'Pengelola Keuangan ' . auth()->user()->unit->name : 'Pengelola Keuangan Yayasan'),
+                    };
+                @endphp
+                <div class="flex items-center gap-2 mb-1">
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse"></span>
+                        Tahun Ajaran 2026/2027
+                    </span>
+                    <span class="text-xs text-slate-400">• {{ now()->translatedFormat('l, d F Y') }}</span>
+                </div>
+                <h2 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+                    Dashboard Ringkasan Keuangan
+                </h2>
+                <p class="text-xs text-slate-500 mt-1 font-medium">
+                    Assalamu'alaikum, <strong class="text-slate-800">{{ auth()->user()->name }}</strong> — {{ $roleSubtitle }}
+                </p>
+            </div>
+
+            <!-- Top Filter & Status Badges -->
+            <div class="flex flex-wrap items-center gap-3">
+                <!-- Status Tutup Buku Bulan Ini -->
+                <div class="px-3.5 py-2 rounded-2xl border text-xs font-bold flex items-center gap-2 {{ $isPeriodClosed ? 'bg-rose-50 border-rose-200 text-rose-800' : 'bg-emerald-50 border-emerald-200 text-emerald-800' }}">
+                    <span class="w-2 h-2 rounded-full {{ $isPeriodClosed ? 'bg-rose-500' : 'bg-emerald-500' }}"></span>
+                    <span>Tutup Buku {{ now()->translatedFormat('F Y') }}: <strong>{{ $isPeriodClosed ? 'Terkunci (Closed)' : 'Aktif (Terbuka)' }}</strong></span>
+                </div>
+
+                @if(!auth()->user()->unit_id)
+                    <!-- Unit Filter for Foundation Officials -->
+                    <form method="GET" action="{{ route('dashboard') }}" class="flex items-center gap-2">
+                        <select name="unit_id" onchange="this.form.submit()" class="text-xs font-bold rounded-2xl border border-slate-300 bg-slate-50 hover:bg-white px-3.5 py-2 focus:ring-2 focus:ring-emerald-500 shadow-2xs cursor-pointer transition">
+                            <option value="">🏢 Seluruh Yayasan (Konsolidasi 4 Unit)</option>
+                            @foreach($units as $u)
+                                <option value="{{ $u->id }}" {{ (string)$unitId === (string)$u->id ? 'selected' : '' }}>
+                                    {{ $u->name }} ({{ $u->code->value }})
+                                </option>
+                            @endforeach
+                        </select>
+                    </form>
+                @endif
+            </div>
+        </div>
     </div>
 
-    <!-- Stat Cards Grid -->
+    <!-- Stat Cards Bento Grid (4 Cards) -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <!-- 1. Total Saldo Kas/Bank -->
-        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs">
+        
+        <!-- 1. Total Saldo Kas & Bank -->
+        <div class="bg-white p-5 rounded-3xl border border-slate-200/90 shadow-2xs hover:shadow-xs transition duration-200">
             <div class="flex items-center justify-between mb-3">
-                <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Saldo Kas & Bank</span>
-                <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
+                <span class="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider">Saldo Kas & Bank</span>
+                <div class="w-9 h-9 rounded-2xl bg-emerald-50 text-emerald-700 flex items-center justify-center font-black text-xs border border-emerald-100">
                     Rp
                 </div>
             </div>
-            <div class="text-2xl font-extrabold text-slate-900">{{ format_rupiah($totalBalance) }}</div>
-            <div class="text-[11px] text-emerald-600 mt-2 font-semibold">Tersedia di brankas & rekening bank</div>
+            <div class="text-2xl font-black text-slate-900 tracking-tight font-mono">
+                {{ format_rupiah($totalBalance) }}
+            </div>
+            <div class="text-[11px] text-emerald-700 mt-2 font-semibold flex items-center gap-1.5">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                <span>{{ $cashAccounts->count() }} Rekening (BSI, Muamalat & Kas)</span>
+            </div>
         </div>
 
         <!-- 2. Pemasukan Bulan Ini -->
-        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs">
+        <div class="bg-white p-5 rounded-3xl border border-slate-200/90 shadow-2xs hover:shadow-xs transition duration-200">
             <div class="flex items-center justify-between mb-3">
-                <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Penerimaan (Bulan Ini)</span>
-                <div class="w-9 h-9 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12"/></svg>
+                <span class="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider">Penerimaan SPP (Bulan Ini)</span>
+                <div class="w-9 h-9 rounded-2xl bg-teal-50 text-teal-700 flex items-center justify-center border border-teal-100">
+                    <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M7 11l5-5m0 0l5 5m-5-5v12"/></svg>
                 </div>
             </div>
-            <div class="text-2xl font-extrabold text-emerald-700">{{ format_rupiah($monthlyIncome) }}</div>
-            <div class="text-[11px] text-slate-500 mt-2">Periode {{ now()->translatedFormat('F Y') }}</div>
+            <div class="text-2xl font-black text-emerald-700 tracking-tight font-mono">
+                {{ format_rupiah($monthlyIncome) }}
+            </div>
+            <div class="text-[11px] text-slate-500 mt-2 flex items-center justify-between">
+                <span>Periode {{ now()->translatedFormat('F Y') }}</span>
+                <span class="font-bold text-emerald-600">+{{ format_rupiah($todayIncome, false) }} hari ini</span>
+            </div>
         </div>
 
         <!-- 3. Pengeluaran Bulan Ini -->
-        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs">
+        <div class="bg-white p-5 rounded-3xl border border-slate-200/90 shadow-2xs hover:shadow-xs transition duration-200">
             <div class="flex items-center justify-between mb-3">
-                <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Pengeluaran (Bulan Ini)</span>
-                <div class="w-9 h-9 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 13l-5 5m0 0l-5-5m5 5V6"/></svg>
+                <span class="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider">Realisasi Belanja (Bulan Ini)</span>
+                <div class="w-9 h-9 rounded-2xl bg-rose-50 text-rose-700 flex items-center justify-center border border-rose-100">
+                    <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 13l-5 5m0 0l-5-5m5 5V6"/></svg>
                 </div>
             </div>
-            <div class="text-2xl font-extrabold text-rose-700">{{ format_rupiah($monthlyExpense) }}</div>
-            <div class="text-[11px] text-slate-500 mt-2">Operasional rutin & pencairan dana</div>
+            <div class="text-2xl font-black text-rose-700 tracking-tight font-mono">
+                {{ format_rupiah($monthlyExpense) }}
+            </div>
+            <div class="text-[11px] text-slate-500 mt-2 flex items-center justify-between">
+                <span>Operasional & Dana Kas</span>
+                <span class="font-bold text-rose-600">-{{ format_rupiah($todayExpense, false) }} hari ini</span>
+            </div>
         </div>
 
         <!-- 4. Total Tunggakan SPP -->
-        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs">
+        <div class="bg-white p-5 rounded-3xl border border-slate-200/90 shadow-2xs hover:shadow-xs transition duration-200">
             <div class="flex items-center justify-between mb-3">
-                <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Tunggakan SPP</span>
-                <div class="w-9 h-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <span class="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider">Total Piutang / Tunggakan</span>
+                <div class="w-9 h-9 rounded-2xl bg-amber-50 text-amber-700 flex items-center justify-center border border-amber-100">
+                    <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
                 </div>
             </div>
-            <div class="text-2xl font-extrabold text-amber-700">{{ format_rupiah($totalArrears) }}</div>
-            <div class="text-[11px] text-slate-500 mt-2">
-                <a href="{{ route('reports.arrears') }}" class="text-amber-800 font-bold hover:underline">Lihat Detail Tunggakan &rarr;</a>
+            <div class="text-2xl font-black text-amber-700 tracking-tight font-mono">
+                {{ format_rupiah($totalArrears) }}
+            </div>
+            <div class="text-[11px] text-slate-500 mt-2 flex items-center justify-between">
+                <span>{{ $arrearsStudentsCount }} Siswa Menunggak</span>
+                <a href="{{ route('reports.arrears') }}" class="font-bold text-amber-800 hover:underline">Detail &rarr;</a>
             </div>
         </div>
+
     </div>
 
-    <!-- Action Shortcuts -->
-    <div class="bg-gradient-to-r from-emerald-800 to-teal-900 rounded-2xl p-6 text-white shadow-lg flex flex-col md:flex-row items-center justify-between gap-4">
+    <!-- Action Shortcuts Launchpad -->
+    <div class="bg-gradient-to-r from-slate-900 via-emerald-950 to-teal-950 rounded-3xl p-5 sm:p-6 text-white shadow-xl border border-slate-800 flex flex-col md:flex-row items-center justify-between gap-4">
         <div>
-            <h3 class="font-extrabold text-lg text-white">Aksi Cepat Keuangan Hari Ini</h3>
-            <p class="text-xs text-emerald-200 mt-0.5">Buka kasir pembayaran SPP siswa, generate tagihan bulanan baru, atau rekam pengeluaran.</p>
+            <div class="flex items-center gap-2 mb-1">
+                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-500/30 text-emerald-300 border border-emerald-400/30">
+                    AKSI CEPAT TRANSAKSI
+                </span>
+                <span class="text-xs text-slate-400">Pusat Layanan Keuangan Harian</span>
+            </div>
+            <h3 class="font-extrabold text-base sm:text-lg text-white">Kasir Pembayaran, Tagihan Baru & Pengajuan Belanja</h3>
         </div>
-        <div class="flex flex-wrap items-center gap-2.5">
-            <a href="{{ route('payments.cashier') }}" class="px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs shadow-md transition flex items-center gap-2">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-                Buka Kasir SPP
+        <div class="flex flex-wrap items-center gap-2.5 w-full md:w-auto">
+            <a href="{{ route('payments.cashier') }}" class="flex-1 md:flex-none px-4 py-2.5 rounded-2xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-black text-xs shadow-lg shadow-amber-500/20 transition flex items-center justify-center gap-2">
+                <svg class="w-4 h-4 text-slate-950" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                <span>Buka Kasir SPP</span>
             </a>
-            <a href="{{ route('invoices.create') }}" class="px-4 py-2.5 rounded-xl bg-white/20 hover:bg-white/30 text-white font-bold text-xs border border-white/20 transition">
-                + Generate Tagihan
+            <a href="{{ route('invoices.create') }}" class="flex-1 md:flex-none px-4 py-2.5 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs border border-white/15 transition text-center">
+                + Tagihan Baru
             </a>
-            <a href="{{ route('expenses.create') }}" class="px-4 py-2.5 rounded-xl bg-white/20 hover:bg-white/30 text-white font-bold text-xs border border-white/20 transition">
-                + Catat Belanja / Pengajuan
+            <a href="{{ route('expenses.create') }}" class="flex-1 md:flex-none px-4 py-2.5 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs border border-white/15 transition text-center">
+                + Pengajuan Dana
+            </a>
+            <a href="{{ route('reports.cash-ledger') }}" class="flex-1 md:flex-none px-4 py-2.5 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs border border-white/15 transition text-center">
+                Buku Kas Umum
             </a>
         </div>
     </div>
 
-    <!-- Main Grid: Recent Transactions & Pending Approvals -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- School Units Performance Cards (4 Units: TKIT, SDIT, SMPIT, SMAIT) -->
+    <div>
+        <div class="flex items-center justify-between mb-3 px-1">
+            <div>
+                <h3 class="text-sm font-extrabold text-slate-900 uppercase tracking-wider">Ringkasan Keuangan 4 Unit Sekolah</h3>
+                <p class="text-xs text-slate-500">Kolektibilitas pembayaran SPP dan perbandingan penerimaan per jenjang</p>
+            </div>
+            @if(!auth()->user()->unit_id)
+                <span class="text-xs font-semibold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
+                    Pusat Konsolidasi Yayasan
+                </span>
+            @endif
+        </div>
 
-        <!-- Left (2 Cols): Buku Kas Mutasi Terakhir -->
-        <div class="lg:col-span-2 bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6">
-            <div class="flex items-center justify-between mb-4">
-                <div>
-                    <h3 class="font-bold text-base text-slate-900">Arus Kas & Mutasi Terakhir</h3>
-                    <p class="text-xs text-slate-500">8 transaksi penerimaan dan pengeluaran terbaru di Buku Kas</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            @foreach($unitSummaries as $summary)
+                @php
+                    $u = $summary['unit'];
+                    $adminName = match($u->code->value) {
+                        'TKIT' => 'Rojanah, S.E.',
+                        'SDIT' => 'Risma, S.Pd',
+                        'SMPIT' => 'Adelia Jesika, S.Pd',
+                        'SMAIT' => 'Admin SMAIT Robbani',
+                        default => $u->principal_name,
+                    };
+                    $rate = $summary['collection_rate'];
+                    $rateColor = $rate >= 80 ? 'bg-emerald-500' : ($rate >= 50 ? 'bg-amber-500' : 'bg-rose-500');
+                    $badgeStyle = match($u->code->value) {
+                        'TKIT' => 'bg-amber-50 text-amber-800 border-amber-200',
+                        'SDIT' => 'bg-emerald-50 text-emerald-800 border-emerald-200',
+                        'SMPIT' => 'bg-sky-50 text-sky-800 border-sky-200',
+                        'SMAIT' => 'bg-purple-50 text-purple-800 border-purple-200',
+                        default => 'bg-slate-50 text-slate-800 border-slate-200',
+                    };
+                @endphp
+                <div class="bg-white rounded-3xl border border-slate-200/90 p-5 shadow-2xs hover:shadow-xs transition duration-200 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black border {{ $badgeStyle }}">
+                                {{ $u->code->value }}
+                            </span>
+                            <span class="text-[11px] font-bold text-slate-400">
+                                {{ $summary['student_count'] }} Siswa
+                            </span>
+                        </div>
+                        <h4 class="font-extrabold text-slate-900 text-sm">{{ $u->name }}</h4>
+                        <p class="text-[11px] text-slate-400 mt-0.5">Admin: <strong class="text-slate-600">{{ $adminName }}</strong></p>
+
+                        <!-- Progress Bar Kolektibilitas -->
+                        <div class="mt-4 pt-3 border-t border-slate-100">
+                            <div class="flex items-center justify-between text-xs mb-1.5">
+                                <span class="text-slate-500 font-semibold">Tingkat Pelunasan</span>
+                                <span class="font-black text-slate-800 font-mono">{{ $rate }}%</span>
+                            </div>
+                            <div class="w-full h-2 rounded-full bg-slate-100 overflow-hidden">
+                                <div class="h-full rounded-full {{ $rateColor }}" style="width: {{ $rate }}%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Billed vs Paid Numbers -->
+                        <div class="mt-3.5 space-y-1 text-xs">
+                            <div class="flex items-center justify-between text-slate-500">
+                                <span>Penerimaan:</span>
+                                <span class="font-bold text-emerald-700 font-mono">{{ format_rupiah($summary['monthly_paid'], false) }}</span>
+                            </div>
+                            <div class="flex items-center justify-between text-slate-500">
+                                <span>Tunggakan:</span>
+                                <span class="font-bold text-amber-700 font-mono">{{ format_rupiah($summary['arrears'], false) }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 pt-3 border-t border-slate-100">
+                        <a href="{{ route('dashboard', ['unit_id' => $u->id]) }}" class="text-[11px] font-bold text-emerald-700 hover:text-emerald-800 flex items-center justify-between">
+                            <span>Filter Unit {{ $u->code->value }}</span>
+                            <span>&rarr;</span>
+                        </a>
+                    </div>
                 </div>
-                <a href="{{ route('reports.cash-ledger') }}" class="text-xs font-bold text-emerald-600 hover:text-emerald-700">Lihat Semua &rarr;</a>
+            @endforeach
+        </div>
+    </div>
+
+    <!-- Main Grid: Recent Transactions & Account Balances / Approvals -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+        <!-- Left (8 Cols): Buku Kas Mutasi Terakhir -->
+        <div class="lg:col-span-8 bg-white rounded-3xl border border-slate-200/90 shadow-2xs p-6">
+            <div class="flex items-center justify-between mb-5">
+                <div>
+                    <h3 class="font-extrabold text-base text-slate-900">Arus Kas & Mutasi Terakhir</h3>
+                    <p class="text-xs text-slate-500 mt-0.5">8 catatan penerimaan dan pengeluaran terbaru di Buku Kas Umum</p>
+                </div>
+                <a href="{{ route('reports.cash-ledger') }}" class="px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition flex items-center gap-1">
+                    <span>Semua Mutasi</span>
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+                </a>
             </div>
 
             <div class="overflow-x-auto">
                 <table class="w-full text-left text-xs">
                     <thead>
-                        <tr class="border-b border-slate-200 text-slate-400 font-bold uppercase tracking-wider">
-                            <th class="py-2.5">Waktu</th>
-                            <th class="py-2.5">Unit / Akun</th>
-                            <th class="py-2.5">Keterangan</th>
-                            <th class="py-2.5 text-right">Nominal (Rp)</th>
+                        <tr class="border-b border-slate-100 text-slate-400 font-extrabold uppercase tracking-wider">
+                            <th class="py-3 px-2">Waktu</th>
+                            <th class="py-3 px-2">Unit & Akun</th>
+                            <th class="py-3 px-2">Keterangan / Transaksi</th>
+                            <th class="py-3 px-2 text-right">Nominal (Rp)</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
                         @forelse($recentLedgers as $l)
-                            <tr class="hover:bg-slate-50/70">
-                                <td class="py-3 text-slate-500 font-mono">{{ $l->transaction_date->format('d/m H:i') }}</td>
-                                <td class="py-3">
-                                    <div class="font-bold text-slate-800">{{ $l->unit?->code->value ?? 'Pusat' }}</div>
-                                    <div class="text-[10px] text-slate-400">{{ $l->cashAccount->name }}</div>
+                            <tr class="hover:bg-slate-50/70 transition">
+                                <td class="py-3.5 px-2 text-slate-500 font-mono whitespace-nowrap">
+                                    {{ $l->transaction_date->format('d/m/Y') }}
+                                    <div class="text-[10px] text-slate-400">{{ $l->transaction_date->format('H:i') }} WIB</div>
                                 </td>
-                                <td class="py-3 text-slate-700 max-w-xs truncate">{{ $l->description }}</td>
-                                <td class="py-3 text-right font-bold {{ $l->type->value === 'in' ? 'text-emerald-600' : 'text-rose-600' }}">
-                                    {{ $l->type->value === 'in' ? '+' : '-' }}{{ format_rupiah($l->amount, false) }}
+                                <td class="py-3.5 px-2">
+                                    <div class="font-bold text-slate-800">{{ $l->unit?->code->value ?? 'Yayasan (Pusat)' }}</div>
+                                    <div class="text-[10px] text-slate-400 font-medium truncate max-w-[140px]">{{ $l->cashAccount->name }}</div>
+                                </td>
+                                <td class="py-3.5 px-2 text-slate-700">
+                                    <div class="font-medium line-clamp-1">{{ $l->description }}</div>
+                                    <div class="text-[10px] text-slate-400 font-mono">Ref: {{ $l->reference_number ?? '-' }}</div>
+                                </td>
+                                <td class="py-3.5 px-2 text-right font-black font-mono whitespace-nowrap {{ $l->type->value === 'in' ? 'text-emerald-700' : 'text-rose-700' }}">
+                                    <span class="inline-flex items-center gap-1">
+                                        <span>{{ $l->type->value === 'in' ? '+' : '-' }}</span>
+                                        <span>{{ format_rupiah($l->amount, false) }}</span>
+                                    </span>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="4" class="py-6 text-center text-slate-400">Belum ada mutasi kas tercatat.</td>
+                                <td colspan="4" class="py-10 text-center text-slate-400">
+                                    <svg class="w-10 h-10 mx-auto text-slate-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                                    Belum ada mutasi kas tercatat untuk unit ini.
+                                </td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -145,49 +307,83 @@
             </div>
         </div>
 
-        <!-- Right (1 Col): Pengajuan Menunggu Approval -->
-        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6 flex flex-col justify-between">
-            <div>
+        <!-- Right (4 Cols): Accounts Mini List & Pending Approvals -->
+        <div class="lg:col-span-4 space-y-6">
+
+            <!-- Card: Saldo Akun Kas & Bank -->
+            <div class="bg-white rounded-3xl border border-slate-200/90 shadow-2xs p-5">
                 <div class="flex items-center justify-between mb-4">
                     <div>
-                        <h3 class="font-bold text-base text-slate-900">Antrean Persetujuan Dana</h3>
-                        <p class="text-xs text-slate-500">Menunggu approval Kepsek/Bendahara</p>
+                        <h4 class="font-extrabold text-sm text-slate-900">Rekening Kas & Bank</h4>
+                        <p class="text-[11px] text-slate-400">Saldo real-time kas yayasan & unit</p>
                     </div>
-                    <span class="w-6 h-6 rounded-full bg-amber-100 text-amber-800 text-xs font-bold flex items-center justify-center">
+                    <span class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-800 text-xs font-black flex items-center justify-center">
+                        {{ $cashAccounts->count() }}
+                    </span>
+                </div>
+
+                <div class="space-y-2.5">
+                    @foreach($cashAccounts as $ca)
+                        <div class="p-3 rounded-2xl border border-slate-100 bg-slate-50/80 hover:bg-slate-100 transition flex items-center justify-between">
+                            <div class="min-w-0 pr-2">
+                                <div class="text-xs font-bold text-slate-800 truncate">{{ $ca->name }}</div>
+                                <div class="text-[10px] text-slate-400">
+                                    {{ $ca->bank_name ?? 'Kas Tunai' }} {{ $ca->account_number ? '• ' . $ca->account_number : '' }}
+                                </div>
+                            </div>
+                            <div class="text-xs font-black text-slate-900 font-mono shrink-0">
+                                {{ format_rupiah($ca->current_balance) }}
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+
+            <!-- Card: Pengajuan Menunggu Approval -->
+            <div class="bg-white rounded-3xl border border-slate-200/90 shadow-2xs p-5">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <h4 class="font-extrabold text-sm text-slate-900">Antrean Persetujuan Dana</h4>
+                        <p class="text-[11px] text-slate-400">Menunggu approval Kepsek/Bendahara</p>
+                    </div>
+                    <span class="w-6 h-6 rounded-full bg-amber-100 text-amber-800 text-xs font-black flex items-center justify-center">
                         {{ $pendingExpenses->count() }}
                     </span>
                 </div>
 
-                <div class="space-y-3">
+                <div class="space-y-2.5">
                     @forelse($pendingExpenses as $pe)
-                        <div class="p-3 rounded-xl border border-slate-100 bg-slate-50 hover:bg-slate-100/80 transition">
+                        <div class="p-3 rounded-2xl border border-slate-100 bg-slate-50/80 hover:bg-slate-100/80 transition">
                             <div class="flex items-start justify-between gap-2">
                                 <div class="font-bold text-xs text-slate-800 line-clamp-1">{{ $pe->title }}</div>
-                                <span class="px-2 py-0.5 text-[10px] font-bold rounded-md bg-amber-100 text-amber-800 shrink-0">
+                                <span class="px-2 py-0.5 text-[10px] font-black rounded-full bg-amber-100 text-amber-800 shrink-0">
                                     {{ $pe->status->label() }}
                                 </span>
                             </div>
                             <div class="flex items-center justify-between mt-2 text-xs">
                                 <span class="text-slate-500 font-medium">{{ $pe->unit->code->value }} • {{ $pe->requestedBy->name }}</span>
-                                <span class="font-bold text-slate-900">{{ format_rupiah($pe->requested_amount) }}</span>
+                                <span class="font-black text-slate-900 font-mono">{{ format_rupiah($pe->requested_amount) }}</span>
                             </div>
-                            <div class="mt-2 text-right">
-                                <a href="{{ route('expenses.show', $pe) }}" class="text-[11px] font-bold text-emerald-600 hover:underline">Periksa & Proses &rarr;</a>
+                            <div class="mt-2.5 text-right">
+                                <a href="{{ route('expenses.show', $pe) }}" class="text-[11px] font-extrabold text-emerald-700 hover:underline">
+                                    Periksa & Setujui &rarr;
+                                </a>
                             </div>
                         </div>
                     @empty
-                        <div class="py-8 text-center text-xs text-slate-400">
-                            Tidak ada pengajuan dana yang tertunda saat ini.
+                        <div class="py-6 text-center text-xs text-slate-400">
+                            Tidak ada pengajuan dana yang tertunda.
                         </div>
                     @endforelse
                 </div>
+
+                <div class="pt-3 border-t border-slate-100 mt-3 text-center">
+                    <a href="{{ route('expenses.index') }}" class="text-xs font-bold text-slate-600 hover:text-slate-900">
+                        Lihat Semua Pengajuan Belanja &rarr;
+                    </a>
+                </div>
             </div>
 
-            <div class="pt-4 border-t border-slate-100 mt-4 text-center">
-                <a href="{{ route('expenses.index') }}" class="text-xs font-bold text-slate-600 hover:text-slate-900">
-                    Lihat Semua Pengajuan Belanja &rarr;
-                </a>
-            </div>
         </div>
 
     </div>

@@ -1,13 +1,18 @@
-# Konteks Proyek: Sistem Keuangan Terpusat Yayasan SIT
+# Konteks Proyek: Sistem Keuangan Terpusat Yayasan Generasi Robbani Sumatera Selatan
 
 Dokumen ini adalah panduan utama (*always-on context*) untuk Agent di **Antigravity IDE**.
 
 ## 1. Gambaran Umum Proyek
-Aplikasi web manajemen keuangan terpusat untuk Yayasan Pendidikan Islam Terpadu yang menaungi **4 unit sekolah**:
-1. **KB/TKIT**
-2. **SDIT**
-3. **SMPIT**
-4. **SMAIT**
+Aplikasi web manajemen keuangan terpusat untuk **Yayasan Generasi Robbani Sumatera Selatan** yang menaungi **4 unit sekolah Islam Terpadu**:
+1. **KB/TKIT Robbani** (Admin: Rojanah, S.E.)
+2. **SDIT Robbani** (Admin: Risma, S.Pd)
+3. **SMPIT Robbani** (Admin: Adelia Jesika, S.Pd)
+4. **SMAIT Robbani** (Admin: Admin Keuangan SMAIT Robbani)
+
+Pusat Yayasan:
+* **Ketua Yayasan:** Sughesti Wulandari, S.Pd (Superadmin)
+* **Bendahara Yayasan:** Dessy Aprianty, S.E. (Otorisator Keuangan Terpusat & Pencairan Dana)
+* **Admin Yayasan (Pusat Pembayaran Siswa):** Anis Monica, S.H. (Kasir Terpusat 4 Unit)
 
 Fokus utama aplikasi adalah akurasi pencatatan kas, manajemen tagihan & pembayaran siswa (termasuk cicilan), persetujuan pengeluaran berjenjang, pelaporan konsolidasi Yayasan vs per Unit, serta keamanan audit (*Audit Trail* & *Tutup Buku*).
 
