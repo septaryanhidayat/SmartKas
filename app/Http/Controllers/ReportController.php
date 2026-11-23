@@ -7,10 +7,8 @@ namespace App\Http\Controllers;
 use App\Exports\ArrearsExport;
 use App\Exports\CashLedgerExport;
 use App\Exports\IncomeExpenseExport;
-use App\Models\AcademicYear;
 use App\Models\CashAccount;
 use App\Models\Classroom;
-use App\Models\FeeComponent;
 use App\Models\Unit;
 use App\Services\FinancialReportService;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -62,7 +60,7 @@ class ReportController extends Controller
 
         return Excel::download(
             new CashLedgerExport($report['mutations'], $report['opening_balance'], $report['closing_balance']),
-            'Buku-Kas-Umum-' . now()->format('YmdHis') . '.xlsx'
+            'Buku-Kas-Umum-'.now()->format('YmdHis').'.xlsx'
         );
     }
 
@@ -79,7 +77,7 @@ class ReportController extends Controller
 
         return Pdf::loadView('pdf.cash_ledger', compact('report', 'startDate', 'endDate'))
             ->setPaper('a4', 'landscape')
-            ->download('Buku-Kas-Umum-' . now()->format('YmdHis') . '.pdf');
+            ->download('Buku-Kas-Umum-'.now()->format('YmdHis').'.pdf');
     }
 
     public function incomeExpense(Request $request): View
@@ -115,7 +113,7 @@ class ReportController extends Controller
                 $report['total_expense'],
                 $report['surplus_deficit']
             ),
-            'Laporan-Surplus-Defisit-' . now()->format('YmdHis') . '.xlsx'
+            'Laporan-Surplus-Defisit-'.now()->format('YmdHis').'.xlsx'
         );
     }
 
@@ -131,7 +129,7 @@ class ReportController extends Controller
 
         return Pdf::loadView('pdf.income_expense', compact('report'))
             ->setPaper('a4', 'portrait')
-            ->download('Laporan-Surplus-Defisit-' . now()->format('YmdHis') . '.pdf');
+            ->download('Laporan-Surplus-Defisit-'.now()->format('YmdHis').'.pdf');
     }
 
     public function arrears(Request $request): View
@@ -162,7 +160,7 @@ class ReportController extends Controller
 
         return Excel::download(
             new ArrearsExport($arrears),
-            'Data-Tunggakan-Siswa-' . now()->format('YmdHis') . '.xlsx'
+            'Data-Tunggakan-Siswa-'.now()->format('YmdHis').'.xlsx'
         );
     }
 }

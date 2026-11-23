@@ -219,9 +219,9 @@ class DatabaseSeeder extends Seeder
         // 5. Create Academic Year
         $currentYear = (int) date('Y');
         $academicYear = AcademicYear::create([
-            'name' => "{$currentYear}/" . ($currentYear + 1),
+            'name' => "{$currentYear}/".($currentYear + 1),
             'start_date' => "{$currentYear}-07-01",
-            'end_date' => ($currentYear + 1) . "-06-30",
+            'end_date' => ($currentYear + 1).'-06-30',
             'is_active' => true,
         ]);
 
@@ -246,7 +246,7 @@ class DatabaseSeeder extends Seeder
                 'name' => $cls['name'],
                 'grade_level' => $cls['grade'],
             ]);
-            $createdClassrooms[$cls['unit']->code->value . '_' . $cls['name']] = $created;
+            $createdClassrooms[$cls['unit']->code->value.'_'.$cls['name']] = $created;
         }
 
         // 7. Create Fee Components
@@ -473,7 +473,7 @@ class DatabaseSeeder extends Seeder
                     'fee_component_id' => null, // applies to all components
                     'valid_from' => Carbon::now()->startOfYear()->toDateString(),
                     'valid_until' => Carbon::now()->addYears(2)->toDateString(),
-                    'notes' => 'Penerima ' . $st['discount']->name,
+                    'notes' => 'Penerima '.$st['discount']->name,
                 ]);
             }
         }

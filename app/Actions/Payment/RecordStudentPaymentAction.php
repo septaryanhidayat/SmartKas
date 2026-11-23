@@ -100,7 +100,7 @@ class RecordStudentPaymentAction
                 $remaining = (int) $invoice->net_amount - (int) $invoice->paid_amount;
                 if ($amount > $remaining) {
                     throw new DomainException(
-                        "Nominal pembayaran (Rp " . number_format($amount, 0, ',', '.') . ") melebihi sisa tagihan [{$invoice->invoice_number}] (Rp " . number_format($remaining, 0, ',', '.') . ")."
+                        'Nominal pembayaran (Rp '.number_format($amount, 0, ',', '.').") melebihi sisa tagihan [{$invoice->invoice_number}] (Rp ".number_format($remaining, 0, ',', '.').').'
                     );
                 }
 

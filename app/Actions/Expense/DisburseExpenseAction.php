@@ -30,14 +30,14 @@ class DisburseExpenseAction
         ?int $disbursedByUserId = null
     ): ExpenseRequest {
         if ($request->status !== ExpenseStatus::APPROVED_TREASURER) {
-            throw new DomainException("Hanya pengajuan yang telah disetujui Bendahara Yayasan yang dapat dicairkan.");
+            throw new DomainException('Hanya pengajuan yang telah disetujui Bendahara Yayasan yang dapat dicairkan.');
         }
 
         $date = $disbursementDate ?? Carbon::now();
         $targetAccountId = $cashAccountId ?? $request->cash_account_id;
 
         if (! $targetAccountId) {
-            throw new DomainException("Akun Kas/Bank pencairan dana harus ditentukan.");
+            throw new DomainException('Akun Kas/Bank pencairan dana harus ditentukan.');
         }
 
         $userId = $disbursedByUserId ?? auth()->id() ?? 1;
@@ -56,10 +56,10 @@ class DisburseExpenseAction
 
             if ((int) $cashAccount->current_balance < $amountToDisburse) {
                 throw new DomainException(
-                    "Saldo akun [{$cashAccount->name}] tidak mencukupi (Tersedia: " .
-                    format_rupiah($cashAccount->current_balance) .
-                    ", Dibutuhkan: " .
-                    format_rupiah($amountToDisburse) . ")."
+                    "Saldo akun [{$cashAccount->name}] tidak mencukupi (Tersedia: ".
+                    format_rupiah($cashAccount->current_balance).
+                    ', Dibutuhkan: '.
+                    format_rupiah($amountToDisburse).').'
                 );
             }
 

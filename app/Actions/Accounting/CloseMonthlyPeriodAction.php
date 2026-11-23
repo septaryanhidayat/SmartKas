@@ -8,7 +8,6 @@ use App\Enums\PeriodStatus;
 use App\Models\ClosingPeriod;
 use Carbon\Carbon;
 use DomainException;
-use Spatie\Activitylog\Facades\LogBatch;
 
 class CloseMonthlyPeriodAction
 {

@@ -42,7 +42,7 @@ class ApproveExpenseRequestAction
         ?int $approverUserId = null
     ): ExpenseRequest {
         if ($request->status !== ExpenseStatus::APPROVED_PRINCIPAL && $request->status !== ExpenseStatus::SUBMITTED) {
-            throw new DomainException("Pengajuan belum disetujui Kepala Sekolah atau status tidak valid.");
+            throw new DomainException('Pengajuan belum disetujui Kepala Sekolah atau status tidak valid.');
         }
 
         $userId = $approverUserId ?? auth()->id() ?? 1;

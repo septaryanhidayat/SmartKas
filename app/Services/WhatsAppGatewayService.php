@@ -28,7 +28,7 @@ class WhatsAppGatewayService
         // Standardize Indonesian phone number to international format 628...
         $cleanPhone = preg_replace('/[^0-9]/', '', $phone);
         if (str_starts_with($cleanPhone, '0')) {
-            $cleanPhone = '62' . substr($cleanPhone, 1);
+            $cleanPhone = '62'.substr($cleanPhone, 1);
         }
 
         $receiptUrl = route('receipts.download', ['payment' => $payment->id]);
@@ -84,14 +84,14 @@ TEXT;
 
                 return $success;
             } catch (\Throwable $e) {
-                Log::error('WA Gateway Error: ' . $e->getMessage(), ['payment_id' => $payment->id]);
+                Log::error('WA Gateway Error: '.$e->getMessage(), ['payment_id' => $payment->id]);
 
                 return false;
             }
         }
 
         // Development/Local mock fallback: Log to Laravel log
-        Log::info("WA Receipt [MOCK SENT] to {$cleanPhone}:\n" . $message);
+        Log::info("WA Receipt [MOCK SENT] to {$cleanPhone}:\n".$message);
         $payment->update(['whatsapp_sent_at' => now()]);
 
         return true;

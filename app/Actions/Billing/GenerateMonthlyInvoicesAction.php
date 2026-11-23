@@ -83,6 +83,7 @@ class GenerateMonthlyInvoicesAction
 
                     if ($exists) {
                         $skippedCount++;
+
                         continue;
                     }
 

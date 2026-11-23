@@ -37,7 +37,7 @@ class ReceiptPdfService
     public function download(Payment $payment): Response
     {
         $pdf = $this->generate($payment);
-        $filename = 'Kwitansi-' . str_replace('/', '-', $payment->receipt_number) . '.pdf';
+        $filename = 'Kwitansi-'.str_replace('/', '-', $payment->receipt_number).'.pdf';
 
         return $pdf->download($filename);
     }

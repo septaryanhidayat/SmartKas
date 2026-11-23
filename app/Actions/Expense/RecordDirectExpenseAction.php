@@ -63,7 +63,7 @@ class RecordDirectExpenseAction
 
             if ((int) $cashAccount->current_balance < $amount) {
                 throw new DomainException(
-                    "Saldo akun [{$cashAccount->name}] tidak mencukupi untuk pengeluaran ini. Tersedia: " . format_rupiah($cashAccount->current_balance)
+                    "Saldo akun [{$cashAccount->name}] tidak mencukupi untuk pengeluaran ini. Tersedia: ".format_rupiah($cashAccount->current_balance)
                 );
             }
 

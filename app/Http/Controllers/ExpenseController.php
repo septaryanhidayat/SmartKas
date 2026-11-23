@@ -8,7 +8,6 @@ use App\Actions\Expense\ApproveExpenseRequestAction;
 use App\Actions\Expense\DisburseExpenseAction;
 use App\Actions\Expense\RecordDirectExpenseAction;
 use App\Actions\Expense\SubmitExpenseRequestAction;
-use App\Enums\ExpenseStatus;
 use App\Enums\ExpenseType;
 use App\Models\CashAccount;
 use App\Models\ExpenseCategory;
