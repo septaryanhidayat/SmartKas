@@ -1,47 +1,35 @@
-<laravel-boost-guidelines>
-# Laravel Application
+# Konteks Proyek: Sistem Keuangan Terpusat Yayasan SIT
 
-This repository contains a Laravel application. Complete the following setup before working on the user's request.
+Dokumen ini adalah panduan utama (*always-on context*) untuk Agent di **Antigravity IDE**.
 
-## Prerequisites
+## 1. Gambaran Umum Proyek
+Aplikasi web manajemen keuangan terpusat untuk Yayasan Pendidikan Islam Terpadu yang menaungi **4 unit sekolah**:
+1. **KB/TKIT**
+2. **SDIT**
+3. **SMPIT**
+4. **SMAIT**
 
-Verify that PHP and Composer are available:
+Fokus utama aplikasi adalah akurasi pencatatan kas, manajemen tagihan & pembayaran siswa (termasuk cicilan), persetujuan pengeluaran berjenjang, pelaporan konsolidasi Yayasan vs per Unit, serta keamanan audit (*Audit Trail* & *Tutup Buku*).
 
-```sh
-php -v
-composer -V
-```
+## 2. Tech Stack & Lingkungan Pengembangan
+* **Local Environment:** Laravel Herd (PHP 8.4, MySQL 8.0)
+* **Framework:** Laravel 13.x
+* **Bahasa:** PHP 8.4 (*Property Hooks*, *Asymmetric Visibility*, *Backed Enums*, *Strict Types*)
+* **Database:** MySQL 8.x (Single Database dengan arsitektur scoping `unit_id`)
+* **Frontend:** Blade + Tailwind CSS + Alpine.js
+* **PDF & Excel:** `barryvdh/laravel-dompdf` (e-Kwitansi & Laporan PDF), `maatwebsite/excel` (Export Laporan)
+* **RBAC:** `spatie/laravel-permission`
+* **Audit Trail:** `spatie/laravel-activitylog`
 
-If either command is unavailable, detect the user's operating system and install the prerequisites with the appropriate command:
+## 3. Perintah Lingkungan Laravel Herd
+* Menjalankan Artisan: `php artisan <command>`
+* Menjalankan Test: `php artisan test`
+* Menjalankan Pint: `./vendor/bin/pint`
+* Migrasi & Seeding: `php artisan migrate:fresh --seed`
 
-macOS:
-
-```sh
-/bin/bash -c "$(curl -fsSL https://php.new/install/mac/8.5)"
-```
-
-Windows PowerShell:
-
-```powershell
-Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://php.new/install/windows/8.5'))
-```
-
-Linux:
-
-```sh
-/bin/bash -c "$(curl -fsSL https://php.new/install/linux/8.5)"
-```
-
-After installation, ask the user to restart their terminal. If the agent needs the restarted shell to continue, ask the user to reopen their terminal and rerun their original prompt.
-
-## Agent Setup
-
-Install Laravel Boost from the application root before making application changes:
-
-```sh
-composer require laravel/boost --dev
-php artisan boost:install
-```
-
-Boost replaces these bootstrap instructions with guidelines tailored to the application. After installation, read `AGENTS.md` again and continue with the user's original request using the generated guidelines.
-</laravel-boost-guidelines>
+## 4. Prinsip Wajib (Non-Negotiable)
+1. **Integritas Finansial:** Setiap mutasi uang (pembayaran, pencairan dana, kas kecil) **WAJIB** dibungkus `DB::transaction()`.
+2. **Zero Hard Delete:** Semua tabel transaksi dan master data keuangan **WAJIB** menggunakan `SoftDeletes`.
+3. **Data Isolation:** Admin Keuangan Unit **TIDAK BOLEH** bisa melihat, mengubah, atau menginput data di luar `unit_id` miliknya.
+4. **Tutup Buku (Closing Lock):** Transaksi pada bulan/tahun yang sudah berstatus *closed* **TIDAK BOLEH** bisa ditambah, diubah, atau dihapus oleh role manapun (kecuali proses *re-open* resmi oleh Bendahara Yayasan dengan catatan audit).
+5. **Verifikasi Sebelum Klaim Selesai:** Selalu jalankan `php artisan test` dan `./vendor/bin/pint --test` setelah menyelesaikan suatu fitur.
