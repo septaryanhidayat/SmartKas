@@ -53,22 +53,25 @@
                         <th class="py-3 px-4 text-right">Sudah Dibayar</th>
                         <th class="py-3 px-4 text-right">Sisa Tagihan</th>
                         <th class="py-3 px-4 text-center">Status</th>
+                        <th class="py-3 px-4 text-center">Invoice</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100">
                     @forelse($student->invoices as $inv)
                         <tr class="hover:bg-slate-50">
-                            <td class="py-3 px-4 font-mono font-bold text-slate-800">{{ $inv->invoice_number }}</td>
+                            <td class="py-3 px-4 whitespace-nowrap">
+                                <x-code-badge :code="$inv->invoice_number" />
+                            </td>
                             <td class="py-3 px-4 font-semibold text-slate-900">{{ $inv->feeComponent->name }}</td>
-                            <td class="py-3 px-4">{{ $inv->billing_month ? "{$inv->billing_month}/{$inv->billing_year}" : '-' }}</td>
-                            <td class="py-3 px-4">{{ $inv->due_date->format('d/m/Y') }}</td>
-                            <td class="py-3 px-4 text-right font-medium">{{ format_rupiah($inv->net_amount) }}</td>
-                            <td class="py-3 px-4 text-right font-medium text-emerald-600">{{ format_rupiah($inv->paid_amount) }}</td>
-                            <td class="py-3 px-4 text-right font-bold {{ $inv->remaining_amount > 0 ? 'text-amber-700' : 'text-slate-400' }}">
+                            <td class="py-3 px-4 whitespace-nowrap">{{ $inv->billing_month ? "{$inv->billing_month}/{$inv->billing_year}" : '-' }}</td>
+                            <td class="py-3 px-4 whitespace-nowrap font-mono">{{ $inv->due_date->format('d/m/Y') }}</td>
+                            <td class="py-3 px-4 text-right font-medium font-mono tabular-nums whitespace-nowrap">{{ format_rupiah($inv->net_amount) }}</td>
+                            <td class="py-3 px-4 text-right font-medium text-emerald-600 font-mono tabular-nums whitespace-nowrap">{{ format_rupiah($inv->paid_amount) }}</td>
+                            <td class="py-3 px-4 text-right font-bold font-mono tabular-nums whitespace-nowrap {{ $inv->remaining_amount > 0 ? 'text-amber-700' : 'text-slate-400' }}">
                                 {{ format_rupiah($inv->remaining_amount) }}
                             </td>
-                            <td class="py-3 px-4 text-center">
-                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold
+                            <td class="py-3 px-4 text-center whitespace-nowrap">
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold inline-block
                                     {{ $inv->status->value === 'paid' ? 'bg-emerald-100 text-emerald-800' : '' }}
                                     {{ $inv->status->value === 'partial' ? 'bg-amber-100 text-amber-800' : '' }}
                                     {{ $inv->status->value === 'unpaid' ? 'bg-rose-100 text-rose-800' : '' }}
@@ -77,10 +80,15 @@
                                     {{ $inv->status->label() }}
                                 </span>
                             </td>
+                            <td class="py-3 px-4 text-center whitespace-nowrap">
+                                <a href="{{ route('invoices.download', $inv) }}" class="inline-flex items-center px-2 py-1 rounded-lg bg-slate-100 hover:bg-emerald-50 text-slate-700 hover:text-emerald-700 font-bold text-[10px] transition" title="Unduh Invoice PDF">
+                                    PDF
+                                </a>
+                            </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="8" class="py-6 text-center text-slate-400">Belum ada tagihan untuk siswa ini.</td>
+                            <td colspan="9" class="py-6 text-center text-slate-400">Belum ada tagihan untuk siswa ini.</td>
                         </tr>
                     @endforelse
                 </tbody>

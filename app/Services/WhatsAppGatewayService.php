@@ -37,9 +37,12 @@ class WhatsAppGatewayService
             $itemsList .= sprintf("\n%d. %s: %s", $idx + 1, $item->invoice->feeComponent->name, format_rupiah($item->amount));
         }
 
+        $foundationName = app_setting('foundation_name', 'Yayasan Generasi Robbani Sumatera Selatan');
+        $appName = app_setting('app_name', 'SmartKas');
+
         $message = <<<TEXT
 *BUKTI PEMBAYARAN - {$unit->name}*
-Yayasan Generasi Robbani Sumatera Selatan
+{$foundationName}
 ---------------------------------------------
 Assalamu'alaikum Wr. Wb.
 Yth. Orang Tua / Wali dari:
@@ -61,7 +64,7 @@ Unduh e-Kwitansi PDF resmi:
 {$receiptUrl}
 
 Jazakumullahu Khairan Katsiran atas kepercayaannya menitipkan pendidikan putra/putri di sekolah kami.
-_Pesan otomatis SmartKas • Yayasan Generasi Robbani Sumatera Selatan_
+_Pesan otomatis {$appName} • {$foundationName}_
 TEXT;
 
         // Check if an external WhatsApp API provider is configured (Fonnte/Wablas/WA Gateway)

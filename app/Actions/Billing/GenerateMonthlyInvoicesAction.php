@@ -37,7 +37,8 @@ class GenerateMonthlyInvoicesAction
     ): array {
         $unit = Unit::findOrFail($unitId);
         $academicYear = AcademicYear::findOrFail($academicYearId);
-        $due = $dueDate ?? Carbon::create($year, $month, 10);
+        $defaultDueDay = max(1, min(28, (int) app_setting('default_due_day', '10')));
+        $due = $dueDate ?? Carbon::create($year, $month, $defaultDueDay);
         $creatorId = $createdByUserId ?? auth()->id() ?? 1;
 
         $this->closingPeriodService->ensurePeriodIsOpen($unitId, Carbon::create($year, $month, 1));
@@ -98,8 +99,9 @@ class GenerateMonthlyInvoicesAction
                     $discountAmount = $student->calculateDiscountFor($component, Carbon::create($year, $month, 1));
                     $netAmount = max(0, $grossAmount - $discountAmount);
 
-                    // Generate unique invoice number: INV/{UNIT}/{YYYYMM}/{SEQ}
-                    $prefix = sprintf('INV/%s/%04d%02d', $unit->code->value, $year, $month);
+                    // Generate unique invoice number: {PREFIX}/{UNIT}/{YYYYMM}/{SEQ}
+                    $invPrefix = strtoupper(trim((string) app_setting('invoice_prefix', 'INV')) ?: 'INV');
+                    $prefix = sprintf('%s/%s/%04d%02d', $invPrefix, $unit->code->value, $year, $month);
                     $sequence = Invoice::query()
                         ->withoutGlobalScope('unit_scope')
                         ->where('invoice_number', 'like', "{$prefix}%")

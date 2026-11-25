@@ -10,6 +10,7 @@ use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\SettingController;
 use App\Http\Controllers\StudentController;
 use Illuminate\Support\Facades\Route;
 
@@ -36,6 +37,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/invoices/generate', [InvoiceController::class, 'create'])->name('invoices.create');
     Route::post('/invoices/generate-monthly', [InvoiceController::class, 'generateMonthly'])->name('invoices.generate-monthly');
     Route::post('/invoices/generate-incidental', [InvoiceController::class, 'generateIncidental'])->name('invoices.generate-incidental');
+    Route::get('/invoices/{invoice}/download', [InvoiceController::class, 'downloadPdf'])->name('invoices.download');
 
     // Cashier & Payments
     Route::get('/cashier', [PaymentController::class, 'cashier'])->name('payments.cashier');
@@ -76,4 +78,16 @@ Route::middleware('auth')->group(function () {
 
     // Audit Trail
     Route::get('/audit-logs', [AuditLogController::class, 'index'])->name('audit-logs.index');
+
+    // Application Settings & User Management
+    Route::middleware('can:manage-settings')->prefix('settings')->name('settings.')->group(function () {
+        Route::get('/', [SettingController::class, 'index'])->name('index');
+        Route::post('/general', [SettingController::class, 'updateGeneral'])->name('update-general');
+        Route::post('/invoice', [SettingController::class, 'updateInvoice'])->name('update-invoice');
+        Route::post('/appearance', [SettingController::class, 'updateAppearance'])->name('update-appearance');
+        Route::post('/units/{unit}', [SettingController::class, 'updateUnit'])->name('update-unit');
+        Route::post('/users', [SettingController::class, 'storeUser'])->name('users.store');
+        Route::put('/users/{user}', [SettingController::class, 'updateUser'])->name('users.update');
+        Route::delete('/users/{user}', [SettingController::class, 'destroyUser'])->name('users.destroy');
+    });
 });

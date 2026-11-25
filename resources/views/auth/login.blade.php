@@ -1,13 +1,30 @@
+@php
+    $appSetting = app(\App\Services\AppSettingService::class);
+    $appName = app_setting('app_name', 'SmartKas');
+    $appTagline = app_setting('app_tagline', 'Sistem Keuangan Terpusat');
+    $foundationName = app_setting('foundation_name', 'Yayasan Generasi Robbani Sumatera Selatan');
+    $foundationAddress = app_setting('foundation_address', 'Jl. Sarjana Blok A No. 25 Timbangan, Indralaya Utara, Ogan Ilir');
+    $academicYear = app_setting('academic_year_label', '2026/2027');
+    $appLogoUrl = app_asset_url(app_setting('app_logo_path', 'images/smartkas-horizontal.png'));
+    $appIconUrl = app_asset_url(app_setting('app_icon_path', 'images/smartkas-icon.png'), 'images/smartkas-icon.png');
+    $activeTheme = $appSetting->activeTheme();
+@endphp
 <!DOCTYPE html>
-<html lang="id" class="h-full bg-slate-50">
+<html lang="id" class="h-full bg-slate-50" style="font-size: {{ $appSetting->activeFontSizePx() }}px;">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Masuk - SmartKas | Yayasan Generasi Robbani Sumatera Selatan</title>
-    <link rel="icon" type="image/png" href="{{ asset('images/smartkas-icon.png') }}">
+    <title>Masuk - {{ $appName }} | {{ $foundationName }}</title>
+    <link rel="icon" type="image/png" href="{{ $appIconUrl }}">
     @fonts
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <style>
+        :root {
+            --font-sans: {!! $appSetting->activeFontStack() !!};
+        }
+        body { font-family: var(--font-sans) !important; }
+    </style>
 </head>
 <body class="min-h-full bg-slate-100/80 text-slate-800 antialiased flex items-center justify-center p-4 sm:p-6 relative overflow-x-hidden">
 
@@ -19,23 +36,23 @@
 
     <div class="w-full max-w-4xl bg-white rounded-3xl shadow-2xl shadow-slate-900/10 border border-slate-200/90 overflow-hidden grid grid-cols-1 lg:grid-cols-12 relative z-10">
 
-        <!-- Left Column: SmartKas & Institutional Identity (5 cols) -->
-        <div class="lg:col-span-5 bg-gradient-to-br from-[#062547] via-[#0B3B6F] to-[#0D6E7A] p-8 sm:p-9 text-white flex flex-col justify-between relative overflow-hidden">
+        <!-- Left Column: Institutional Identity (5 cols) -->
+        <div class="lg:col-span-5 p-8 sm:p-9 text-white flex flex-col justify-between relative overflow-hidden" style="background: {{ $activeTheme['gradient'] }};">
             <!-- Subtle Geometric Glow -->
             <div class="absolute -right-16 -bottom-16 w-56 h-56 rounded-full bg-teal-400/15 blur-2xl pointer-events-none"></div>
 
             <div class="relative z-10 space-y-7">
-                <!-- SmartKas Official Logo on Crisp White Card -->
+                <!-- App Official Logo on Crisp White Card -->
                 <div class="bg-white rounded-2xl px-5 py-3.5 shadow-lg inline-flex items-center justify-center">
-                    <img src="{{ asset('images/smartkas-horizontal.png') }}" alt="SmartKas Logo" class="h-10 w-auto object-contain">
+                    <img src="{{ $appLogoUrl }}" alt="{{ $appName }} Logo" class="h-10 w-auto object-contain">
                 </div>
 
                 <div>
                     <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest bg-white/10 text-teal-200 border border-white/15 mb-3">
-                        Sistem Manajemen Keuangan Sekolah
+                        {{ $appTagline }}
                     </span>
                     <h1 class="text-lg font-extrabold tracking-tight leading-snug text-white">
-                        Yayasan Generasi Robbani Sumatera Selatan
+                        {{ $foundationName }}
                     </h1>
                     <p class="text-xs text-slate-200/85 mt-1.5 leading-relaxed">
                         Platform keuangan terpusat untuk pengelolaan kas, tagihan SPP, pencairan anggaran, dan pelaporan akuntabel seluruh unit SIT.
@@ -69,12 +86,12 @@
             </div>
 
             <!-- Institutional Location Footer -->
-            <div class="mt-8 pt-5 border-t border-white/15 relative z-10 flex items-center justify-between text-[11px] text-slate-200/80">
-                <span class="flex items-center gap-1.5">
-                    <span class="w-2 h-2 rounded-full bg-teal-400"></span>
-                    <span>Palembang, Sumatera Selatan</span>
+            <div class="mt-8 pt-5 border-t border-white/15 relative z-10 flex items-center justify-between gap-3 text-[11px] text-slate-200/85">
+                <span class="flex items-start gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-teal-400 shrink-0 mt-1"></span>
+                    <span>{{ $foundationAddress }}</span>
                 </span>
-                <span class="font-semibold text-teal-200">TA 2026/2027</span>
+                <span class="font-semibold text-teal-200 shrink-0">TA {{ $academicYear }}</span>
             </div>
         </div>
 
@@ -83,7 +100,7 @@
             <div class="my-auto">
                 <!-- Mobile Logo Preview -->
                 <div class="lg:hidden mb-6 flex justify-center">
-                    <img src="{{ asset('images/smartkas-horizontal.png') }}" alt="SmartKas Logo" class="h-10 w-auto object-contain">
+                    <img src="{{ $appLogoUrl }}" alt="{{ $appName }} Logo" class="h-10 w-auto object-contain">
                 </div>
 
                 <div class="mb-7">
@@ -177,7 +194,7 @@
 
             <!-- Security & Copyright Footer -->
             <div class="mt-8 pt-5 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] text-slate-400">
-                <span>&copy; {{ date('Y') }} SmartKas • Yayasan Generasi Robbani Sumatera Selatan</span>
+                <span>&copy; {{ date('Y') }} {{ $appName }} &bull; {{ $foundationName }}</span>
                 <span class="flex items-center gap-1 text-slate-500 font-medium">
                     <svg class="w-3.5 h-3.5 text-teal-600" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>

@@ -66,7 +66,8 @@ class GenerateIncidentalInvoicesAction
                 $discountAmount = $student->calculateDiscountFor($component);
                 $netAmount = max(0, $grossAmount - $discountAmount);
 
-                $prefix = sprintf('INV/%s/%04d%02d', $unit->code->value, $year, $month);
+                $invPrefix = strtoupper(trim((string) app_setting('invoice_prefix', 'INV')) ?: 'INV');
+                $prefix = sprintf('%s/%s/%04d%02d', $invPrefix, $unit->code->value, $year, $month);
                 $sequence = Invoice::query()
                     ->withoutGlobalScope('unit_scope')
                     ->where('invoice_number', 'like', "{$prefix}%")

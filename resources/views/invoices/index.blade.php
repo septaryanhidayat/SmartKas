@@ -79,30 +79,32 @@
                 <tbody class="divide-y divide-slate-100">
                     @forelse($invoices as $inv)
                         <tr class="hover:bg-slate-50 transition">
-                            <td class="py-3 px-4 font-mono font-bold text-slate-900">{{ $inv->invoice_number }}</td>
-                            <td class="py-3 px-4">
-                                <div class="font-bold text-slate-900">{{ $inv->student->name }}</div>
-                                <div class="text-[11px] text-slate-500 font-medium">
-                                    {{ $inv->unit->code->value }} • {{ $inv->student->classroom?->name ?? 'NIS: ' . $inv->student->nis }}
+                            <td class="py-3 px-4 whitespace-nowrap">
+                                <x-code-badge :code="$inv->invoice_number" />
+                            </td>
+                            <td class="py-3 px-4 min-w-[170px]">
+                                <div class="font-bold text-slate-900 leading-snug">{{ $inv->student->name }}</div>
+                                <div class="text-[11px] text-slate-500 font-medium mt-0.5">
+                                    {{ $inv->unit->code->value }} &bull; {{ $inv->student->classroom?->name ?? 'NIS: ' . $inv->student->nis }}
                                 </div>
                             </td>
-                            <td class="py-3 px-4 font-semibold text-slate-800">
-                                {{ $inv->feeComponent->name }}
+                            <td class="py-3 px-4 font-semibold text-slate-800 min-w-[140px]">
+                                <div class="leading-snug">{{ $inv->feeComponent->name }}</div>
                                 @if($inv->discount_amount > 0)
-                                    <div class="text-[10px] text-emerald-600 font-medium">Potongan: {{ format_rupiah($inv->discount_amount) }}</div>
+                                    <div class="text-[10px] text-emerald-600 font-medium whitespace-nowrap">Potongan: {{ format_rupiah($inv->discount_amount) }}</div>
                                 @endif
                             </td>
-                            <td class="py-3 px-4">
-                                <div class="font-medium text-slate-700">{{ $inv->billing_month ? "Bulan {$inv->billing_month}/{$inv->billing_year}" : 'Insidentil' }}</div>
+                            <td class="py-3 px-4 whitespace-nowrap">
+                                <div class="font-medium text-slate-700">{{ $inv->billing_month ? "Bln {$inv->billing_month}/{$inv->billing_year}" : 'Insidentil' }}</div>
                                 <div class="text-[10px] text-slate-400">Tempo: {{ $inv->due_date->format('d/m/Y') }}</div>
                             </td>
-                            <td class="py-3 px-4 text-right font-medium text-slate-900">{{ format_rupiah($inv->net_amount) }}</td>
-                            <td class="py-3 px-4 text-right font-medium text-emerald-600">{{ format_rupiah($inv->paid_amount) }}</td>
-                            <td class="py-3 px-4 text-right font-bold {{ $inv->remaining_amount > 0 ? 'text-amber-700' : 'text-slate-400' }}">
+                            <td class="py-3 px-4 text-right font-medium text-slate-900 font-mono tabular-nums whitespace-nowrap">{{ format_rupiah($inv->net_amount) }}</td>
+                            <td class="py-3 px-4 text-right font-medium text-emerald-600 font-mono tabular-nums whitespace-nowrap">{{ format_rupiah($inv->paid_amount) }}</td>
+                            <td class="py-3 px-4 text-right font-bold font-mono tabular-nums whitespace-nowrap {{ $inv->remaining_amount > 0 ? 'text-amber-700' : 'text-slate-400' }}">
                                 {{ format_rupiah($inv->remaining_amount) }}
                             </td>
-                            <td class="py-3 px-4 text-center">
-                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold
+                            <td class="py-3 px-4 text-center whitespace-nowrap">
+                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold inline-block
                                     {{ $inv->status->value === 'paid' ? 'bg-emerald-100 text-emerald-800' : '' }}
                                     {{ $inv->status->value === 'partial' ? 'bg-amber-100 text-amber-800' : '' }}
                                     {{ $inv->status->value === 'unpaid' ? 'bg-rose-100 text-rose-800' : '' }}
@@ -111,14 +113,17 @@
                                     {{ $inv->status->label() }}
                                 </span>
                             </td>
-                            <td class="py-3 px-4 text-center">
-                                @if($inv->status->value !== 'paid' && $inv->status->value !== 'void')
-                                    <a href="{{ route('payments.cashier', ['student_id' => $inv->student_id]) }}" class="px-2.5 py-1 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-[10px] transition">
-                                        Bayar
+                            <td class="py-3 px-4 text-center whitespace-nowrap">
+                                <div class="inline-flex items-center justify-center gap-1.5">
+                                    <a href="{{ route('invoices.download', $inv) }}" class="p-1.5 rounded-lg bg-slate-100 hover:bg-emerald-50 text-slate-600 hover:text-emerald-700 transition" title="Cetak / Unduh Invoice PDF">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                                     </a>
-                                @else
-                                    <span class="text-slate-400 text-[10px]">-</span>
-                                @endif
+                                    @if($inv->status->value !== 'paid' && $inv->status->value !== 'void')
+                                        <a href="{{ route('payments.cashier', ['student_id' => $inv->student_id]) }}" class="px-2.5 py-1 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-[10px] transition">
+                                            Bayar
+                                        </a>
+                                    @endif
+                                </div>
                             </td>
                         </tr>
                     @empty

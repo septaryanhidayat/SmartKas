@@ -111,10 +111,11 @@ class RecordStudentPaymentAction
                 ];
             }
 
-            // 4. Generate unique receipt number: KW/{UNIT_CODE}/{YYYYMM}/{SEQ}
+            // 4. Generate unique receipt number: {PREFIX}/{UNIT_CODE}/{YYYYMM}/{SEQ}
             $unitCode = $student->unit->code->value;
             $yearMonth = $date->format('Ym');
-            $prefix = "KW/{$unitCode}/{$yearMonth}";
+            $recPrefix = strtoupper(trim((string) app_setting('receipt_prefix', 'KW')) ?: 'KW');
+            $prefix = "{$recPrefix}/{$unitCode}/{$yearMonth}";
             $countThisMonth = Payment::query()
                 ->withoutGlobalScope('unit_scope')
                 ->where('receipt_number', 'like', "{$prefix}%")

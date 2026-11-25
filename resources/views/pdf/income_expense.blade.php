@@ -17,12 +17,31 @@
     </style>
 </head>
 <body>
+    @php
+        $logoUri = app_setting('show_foundation_logo_on_pdf', '1') === '1'
+            ? logo_data_uri(app_setting('foundation_logo_path', 'images/yayasan-logo.png'))
+            : null;
+        $foundationName = app_setting('foundation_name', 'Yayasan Generasi Robbani Sumatera Selatan');
+        $foundationAddress = app_setting('foundation_address', 'Jl. Sarjana Blok A No. 25 Timbangan, Indralaya Utara, Ogan Ilir');
+    @endphp
     <div class="header">
-        <div class="title">LAPORAN SURPLUS / DEFISIT (LABA RUGI)</div>
-        <div class="meta">
-            {{ $report['unit'] ? $report['unit']->name : 'KONSOLIDASI YAYASAN GENERASI ROBBANI SUMATERA SELATAN' }}
-            <br>Periode: {{ $report['start_date']->translatedFormat('d F Y') }} s/d {{ $report['end_date']->translatedFormat('d F Y') }}
-        </div>
+        <table style="width: 100%; margin: 0; border-collapse: collapse;">
+            <tr>
+                @if($logoUri)
+                    <td style="width: 115px; border: none; padding: 0 10px 0 0; vertical-align: middle;">
+                        <img src="{{ $logoUri }}" alt="Logo Yayasan" style="max-height: 46px; max-width: 110px; width: auto;">
+                    </td>
+                @endif
+                <td style="border: none; padding: 0; vertical-align: middle;">
+                    <div style="font-size: 10px; font-weight: bold; color: #0B3B6F; text-transform: uppercase;">{{ $foundationName }}</div>
+                    <div class="title">LAPORAN SURPLUS / DEFISIT (LABA RUGI)</div>
+                    <div class="meta">
+                        {{ $foundationAddress }}<br>
+                        {{ $report['unit'] ? $report['unit']->name : 'Konsolidasi Seluruh Unit' }} | Periode: {{ $report['start_date']->translatedFormat('d F Y') }} s/d {{ $report['end_date']->translatedFormat('d F Y') }}
+                    </div>
+                </td>
+            </tr>
+        </table>
     </div>
 
     <table>

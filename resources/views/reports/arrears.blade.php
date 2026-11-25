@@ -95,28 +95,30 @@
                             $waLink = $arr->student->parent_whatsapp ? "https://wa.me/{$arr->student->parent_whatsapp}?text={$waText}" : null;
                         @endphp
                         <tr class="hover:bg-slate-50 transition">
-                            <td class="py-3 px-4 font-mono font-bold text-slate-800">{{ $arr->invoice_number }}</td>
-                            <td class="py-3 px-4">
-                                <div class="font-bold text-slate-900">{{ $arr->student->name }}</div>
+                            <td class="py-3 px-4 whitespace-nowrap">
+                                <x-code-badge :code="$arr->invoice_number" />
+                            </td>
+                            <td class="py-3 px-4 min-w-[160px]">
+                                <div class="font-bold text-slate-900 leading-snug">{{ $arr->student->name }}</div>
                                 <div class="text-[10px] text-slate-400 font-mono">{{ $arr->student->nis }}</div>
                             </td>
-                            <td class="py-3 px-4">
+                            <td class="py-3 px-4 whitespace-nowrap">
                                 <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-700">{{ $arr->unit->code->value }}</span>
                                 <div class="text-slate-600 font-medium mt-0.5">{{ $arr->student->classroom?->name }}</div>
                             </td>
-                            <td class="py-3 px-4 font-semibold text-slate-800">
-                                {{ $arr->feeComponent->name }}
+                            <td class="py-3 px-4 font-semibold text-slate-800 min-w-[140px]">
+                                <div class="leading-snug">{{ $arr->feeComponent->name }}</div>
                                 @if($arr->billing_month)
-                                    <div class="text-[10px] text-slate-400 font-normal">Bulan {{ $arr->billing_month }}/{{ $arr->billing_year }}</div>
+                                    <div class="text-[10px] text-slate-400 font-normal whitespace-nowrap">Bln {{ $arr->billing_month }}/{{ $arr->billing_year }}</div>
                                 @endif
                             </td>
-                            <td class="py-3 px-4 text-rose-600 font-semibold">
+                            <td class="py-3 px-4 text-rose-600 font-semibold whitespace-nowrap font-mono">
                                 {{ $arr->due_date->format('d/m/Y') }}
                             </td>
-                            <td class="py-3 px-4 text-right font-black text-amber-700 text-sm">
+                            <td class="py-3 px-4 text-right font-black text-amber-700 text-sm font-mono tabular-nums whitespace-nowrap">
                                 {{ format_rupiah($arr->remaining_amount) }}
                             </td>
-                            <td class="py-3 px-4 text-center">
+                            <td class="py-3 px-4 text-center whitespace-nowrap">
                                 @if($waLink)
                                     <a href="{{ $waLink }}" target="_blank" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-100 hover:bg-emerald-200 text-emerald-800 font-bold text-[10px] transition">
                                         <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>

@@ -71,25 +71,25 @@
                 <tbody class="divide-y divide-slate-100">
                     @forelse($expenses as $exp)
                         <tr class="hover:bg-slate-50 transition">
-                            <td class="py-3 px-4 font-mono font-bold text-slate-900">{{ $exp->request_number }}</td>
-                            <td class="py-3 px-4">
+                            <td class="py-3 px-4 whitespace-nowrap"><x-code-badge :code="$exp->request_number" /></td>
+                            <td class="py-3 px-4 min-w-[160px]">
                                 <div class="font-bold text-slate-900">{{ $exp->title }}</div>
                                 <div class="text-[10px] text-slate-400">{{ $exp->expenseCategory->name }}</div>
                             </td>
-                            <td class="py-3 px-4">
+                            <td class="py-3 px-4 whitespace-nowrap">
                                 <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-700">{{ $exp->unit->code->value }}</span>
                                 <div class="text-[11px] text-slate-500 mt-0.5">{{ $exp->requestedBy->name }}</div>
                             </td>
-                            <td class="py-3 px-4">
+                            <td class="py-3 px-4 whitespace-nowrap">
                                 <span class="text-slate-600 font-medium">{{ $exp->expense_type->label() }}</span>
                             </td>
-                            <td class="py-3 px-4 text-right font-medium text-slate-700">
+                            <td class="py-3 px-4 text-right font-medium text-slate-700 font-mono tabular-nums whitespace-nowrap">
                                 {{ format_rupiah($exp->requested_amount) }}
                             </td>
-                            <td class="py-3 px-4 text-right font-bold text-emerald-700">
+                            <td class="py-3 px-4 text-right font-bold text-emerald-700 font-mono tabular-nums whitespace-nowrap">
                                 {{ $exp->approved_amount ? format_rupiah($exp->approved_amount) : '-' }}
                             </td>
-                            <td class="py-3 px-4 text-center">
+                            <td class="py-3 px-4 text-center whitespace-nowrap">
                                 <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold
                                     {{ $exp->status->value === 'disbursed' ? 'bg-emerald-100 text-emerald-800' : '' }}
                                     {{ $exp->status->value === 'approved_treasurer' ? 'bg-teal-100 text-teal-800' : '' }}

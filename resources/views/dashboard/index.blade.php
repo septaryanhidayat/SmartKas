@@ -10,7 +10,7 @@
                 <div class="flex flex-wrap items-center gap-2 mb-1.5">
                     <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-teal-50 text-[#0B3B6F] border border-teal-200">
                         <span class="w-1.5 h-1.5 rounded-full bg-teal-500"></span>
-                        Tahun Ajaran 2026/2027
+                        Tahun Ajaran {{ app_setting('academic_year_label', '2026/2027') }}
                     </span>
                     <span class="text-xs text-slate-400 font-medium">&bull; {{ now()->translatedFormat('l, d F Y') }}</span>
                 </div>
@@ -46,7 +46,7 @@
     </div>
 
     <!-- Stat Cards Bento Grid (4 Cards) -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
 
         <!-- 1. Total Saldo Kas & Bank -->
         <div class="bg-white p-5 rounded-2xl border border-slate-200/90 shadow-sm hover:shadow-md transition">
@@ -56,7 +56,7 @@
                     Rp
                 </div>
             </div>
-            <div class="text-2xl font-extrabold text-slate-900 tracking-tight font-mono tabular-nums">
+            <div class="text-lg xl:text-[21px] font-extrabold text-slate-900 tracking-tight font-mono tabular-nums whitespace-nowrap">
                 {{ format_rupiah($totalBalance) }}
             </div>
             <div class="text-[11px] text-teal-700 mt-2 font-semibold flex items-center gap-1.5">
@@ -77,12 +77,12 @@
                     </svg>
                 </div>
             </div>
-            <div class="text-2xl font-extrabold text-teal-700 tracking-tight font-mono tabular-nums">
+            <div class="text-lg xl:text-[21px] font-extrabold text-teal-700 tracking-tight font-mono tabular-nums whitespace-nowrap">
                 {{ format_rupiah($monthlyIncome) }}
             </div>
             <div class="text-[11px] text-slate-500 mt-2 flex items-center justify-between gap-2">
                 <span>{{ now()->translatedFormat('F Y') }}</span>
-                <span class="font-bold text-teal-700">+{{ format_rupiah($todayIncome, false) }} hari ini</span>
+                <span class="font-bold text-teal-700 whitespace-nowrap">+{{ format_rupiah($todayIncome, false) }} hari ini</span>
             </div>
         </div>
 
@@ -96,12 +96,12 @@
                     </svg>
                 </div>
             </div>
-            <div class="text-2xl font-extrabold text-rose-700 tracking-tight font-mono tabular-nums">
+            <div class="text-lg xl:text-[21px] font-extrabold text-rose-700 tracking-tight font-mono tabular-nums whitespace-nowrap">
                 {{ format_rupiah($monthlyExpense) }}
             </div>
             <div class="text-[11px] text-slate-500 mt-2 flex items-center justify-between gap-2">
                 <span>Realisasi Cair</span>
-                <span class="font-bold text-rose-600">-{{ format_rupiah($todayExpense, false) }} hari ini</span>
+                <span class="font-bold text-rose-600 whitespace-nowrap">-{{ format_rupiah($todayExpense, false) }} hari ini</span>
             </div>
         </div>
 
@@ -115,23 +115,23 @@
                     </svg>
                 </div>
             </div>
-            <div class="text-2xl font-extrabold text-amber-700 tracking-tight font-mono tabular-nums">
+            <div class="text-lg xl:text-[21px] font-extrabold text-amber-700 tracking-tight font-mono tabular-nums whitespace-nowrap">
                 {{ format_rupiah($totalArrears) }}
             </div>
             <div class="text-[11px] text-slate-500 mt-2 flex items-center justify-between gap-2">
                 <span>{{ $arrearsStudentsCount }} Siswa</span>
-                <a href="{{ route('reports.arrears') }}" class="font-bold text-[#0B3B6F] hover:text-teal-700 hover:underline">Lihat Rekap &rarr;</a>
+                <a href="{{ route('reports.arrears') }}" class="font-bold text-[#0B3B6F] hover:text-teal-700 hover:underline whitespace-nowrap">Lihat Rekap &rarr;</a>
             </div>
         </div>
 
     </div>
 
     <!-- Action Shortcuts Launchpad -->
-    <div class="bg-gradient-to-r from-[#062547] via-[#0B3B6F] to-[#0D6E7A] rounded-2xl p-5 sm:p-6 text-white shadow-lg flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+    <div style="background: {{ app(\App\Services\AppSettingService::class)->activeTheme()['gradient'] }};" class="rounded-2xl p-5 sm:p-6 text-white shadow-lg flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div>
             <div class="flex items-center gap-2 mb-1">
                 <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-white/15 text-teal-200 uppercase tracking-wider">
-                    Layanan Cepat SmartKas
+                    Layanan Cepat {{ app_setting('app_name', 'SmartKas') }}
                 </span>
             </div>
             <h3 class="font-bold text-base sm:text-lg text-white">Kasir Pembayaran Siswa, Generate Tagihan &amp; Pengajuan Belanja</h3>
@@ -177,7 +177,7 @@
             @endif
         </div>
 
-        <div class="grid grid-cols-1 {{ count($unitSummaries) > 1 ? 'md:grid-cols-2 lg:grid-cols-4' : 'max-w-md' }} gap-4">
+        <div class="grid grid-cols-1 {{ count($unitSummaries) > 1 ? 'md:grid-cols-2 xl:grid-cols-4' : 'max-w-md' }} gap-4">
             @foreach($unitSummaries as $summary)
                 @php
                     $u = $summary['unit'];
@@ -193,16 +193,16 @@
                 @endphp
                 <div class="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-sm hover:shadow-md transition flex flex-col justify-between">
                     <div>
-                        <div class="flex items-center justify-between mb-2.5">
-                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold border {{ $badgeStyle }}">
+                        <div class="flex items-center justify-between mb-2.5 gap-2">
+                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold border shrink-0 {{ $badgeStyle }}">
                                 {{ $u->code->value }}
                             </span>
-                            <span class="text-[11px] font-bold text-slate-400">
+                            <span class="text-[11px] font-bold text-slate-400 whitespace-nowrap">
                                 {{ $summary['student_count'] }} Siswa Aktif
                             </span>
                         </div>
                         <h4 class="font-extrabold text-slate-900 text-sm">{{ $u->name }}</h4>
-                        <div class="text-[11px] text-slate-500 mt-1 space-y-0.5">
+                        <div class="text-[11px] text-slate-500 mt-1 space-y-0.5 leading-snug">
                             <div>Kepsek: <strong class="text-slate-700">{{ $u->principal_name ?? '-' }}</strong></div>
                             <div>Admin: <strong class="text-slate-700">{{ $summary['admin_name'] }}</strong></div>
                         </div>
@@ -211,7 +211,7 @@
                         <div class="mt-4 pt-3 border-t border-slate-100">
                             <div class="flex items-center justify-between text-xs mb-1.5">
                                 <span class="text-slate-500 font-semibold">Pelunasan Bulan Ini</span>
-                                <span class="font-extrabold text-slate-800 font-mono">{{ $rate }}%</span>
+                                <span class="font-extrabold text-slate-800 font-mono whitespace-nowrap">{{ $rate }}%</span>
                             </div>
                             <div class="w-full h-2 rounded-full bg-slate-100 overflow-hidden">
                                 <div class="h-full rounded-full {{ $rateColor }}" style="width: {{ $rate }}%"></div>
@@ -220,13 +220,13 @@
 
                         <!-- Financial Stats -->
                         <div class="mt-3.5 space-y-1 text-xs">
-                            <div class="flex items-center justify-between text-slate-500">
+                            <div class="flex items-center justify-between gap-2 text-slate-500">
                                 <span>Penerimaan:</span>
-                                <span class="font-bold text-teal-700 font-mono tabular-nums">{{ format_rupiah($summary['monthly_paid']) }}</span>
+                                <span class="font-bold text-teal-700 font-mono tabular-nums whitespace-nowrap">{{ format_rupiah($summary['monthly_paid']) }}</span>
                             </div>
-                            <div class="flex items-center justify-between text-slate-500">
+                            <div class="flex items-center justify-between gap-2 text-slate-500">
                                 <span>Tunggakan:</span>
-                                <span class="font-bold text-amber-700 font-mono tabular-nums">{{ format_rupiah($summary['arrears']) }}</span>
+                                <span class="font-bold text-amber-700 font-mono tabular-nums whitespace-nowrap">{{ format_rupiah($summary['arrears']) }}</span>
                             </div>
                         </div>
                     </div>
@@ -254,7 +254,7 @@
                     <h3 class="font-extrabold text-base text-slate-900">Arus Kas &amp; Mutasi Terakhir</h3>
                     <p class="text-xs text-slate-500 mt-0.5">8 transaksi terbaru pada Buku Kas Umum</p>
                 </div>
-                <a href="{{ route('reports.cash-ledger') }}" class="px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition inline-flex items-center gap-1">
+                <a href="{{ route('reports.cash-ledger') }}" class="px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition inline-flex items-center gap-1 shrink-0">
                     <span>Semua Mutasi</span>
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/>
@@ -266,10 +266,10 @@
                 <table class="w-full text-left text-xs">
                     <thead>
                         <tr class="border-b border-slate-200 text-slate-400 font-bold uppercase tracking-wider">
-                            <th class="py-3 px-2">Waktu</th>
-                            <th class="py-3 px-2">Unit &amp; Akun</th>
+                            <th class="py-3 px-2 whitespace-nowrap">Waktu</th>
+                            <th class="py-3 px-2 whitespace-nowrap">Unit &amp; Akun</th>
                             <th class="py-3 px-2">Keterangan</th>
-                            <th class="py-3 px-2 text-right">Nominal (Rp)</th>
+                            <th class="py-3 px-2 text-right whitespace-nowrap">Nominal (Rp)</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
@@ -279,12 +279,14 @@
                                     {{ $l->transaction_date->format('d/m/Y') }}
                                     <div class="text-[10px] text-slate-400">{{ $l->transaction_date->format('H:i') }} WIB</div>
                                 </td>
-                                <td class="py-3 px-2">
+                                <td class="py-3 px-2 min-w-[145px]">
                                     <div class="font-bold text-slate-800">{{ $l->unit?->code->value ?? 'Yayasan' }}</div>
-                                    <div class="text-[10px] text-slate-400 font-medium truncate max-w-[140px]">{{ $l->cashAccount->name }}</div>
+                                    <div class="text-[10px] text-slate-400 font-medium leading-tight">{{ $l->cashAccount->name }}</div>
                                 </td>
                                 <td class="py-3 px-2 text-slate-700">
-                                    <div class="font-medium line-clamp-1">{{ $l->description }}</div>
+                                    <div class="font-medium leading-snug" title="{{ $l->description }}">
+                                        {{ format_ledger_description($l->description) }}
+                                    </div>
                                 </td>
                                 <td class="py-3 px-2 text-right font-extrabold font-mono tabular-nums whitespace-nowrap {{ $l->type->value === 'in' ? 'text-teal-700' : 'text-rose-700' }}">
                                     {{ $l->type->value === 'in' ? '+' : '-' }}{{ format_rupiah($l->amount, false) }}
@@ -322,14 +324,14 @@
 
                 <div class="space-y-2">
                     @foreach($cashAccounts as $ca)
-                        <div class="p-3 rounded-xl border border-slate-100 bg-slate-50/70 hover:bg-slate-100/80 transition flex items-center justify-between gap-2">
+                        <div class="p-3 rounded-xl border border-slate-100 bg-slate-50/70 hover:bg-slate-100/80 transition flex items-start justify-between gap-3">
                             <div class="min-w-0">
-                                <div class="text-xs font-bold text-slate-800 truncate">{{ $ca->name }}</div>
-                                <div class="text-[10px] text-slate-400 truncate">
+                                <div class="text-xs font-bold text-slate-800 leading-snug">{{ $ca->name }}</div>
+                                <div class="text-[10px] text-slate-400 leading-snug mt-0.5">
                                     {{ $ca->bank_name ?? 'Kas Tunai' }} {{ $ca->account_number ? '• ' . $ca->account_number : '' }}
                                 </div>
                             </div>
-                            <div class="text-xs font-extrabold text-slate-900 font-mono tabular-nums shrink-0">
+                            <div class="text-xs font-extrabold text-slate-900 font-mono tabular-nums whitespace-nowrap shrink-0">
                                 {{ format_rupiah($ca->current_balance) }}
                             </div>
                         </div>

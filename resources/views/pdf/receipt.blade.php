@@ -114,14 +114,27 @@
 </head>
 <body>
     <div class="header">
+        @php
+            $logoUri = app_setting('show_foundation_logo_on_pdf', '1') === '1'
+                ? logo_data_uri(app_setting('foundation_logo_path', 'images/yayasan-logo.png'))
+                : null;
+            $foundationName = app_setting('foundation_name', 'Yayasan Generasi Robbani Sumatera Selatan');
+            $foundationAddress = app_setting('foundation_address', 'Jl. Sarjana Blok A No. 25 Timbangan, Indralaya Utara, Ogan Ilir');
+            $foundationPhone = $unit->phone ?: app_setting('foundation_phone', '0711-820123');
+        @endphp
         <table class="kop-table">
             <tr>
-                <td style="width: 65%;">
-                    <div class="foundation-name">YAYASAN GENERASI ROBBANI SUMATERA SELATAN</div>
+                @if($logoUri)
+                    <td style="width: 118px; vertical-align: middle; padding-right: 10px;">
+                        <img src="{{ $logoUri }}" alt="Logo Yayasan" style="max-height: 48px; max-width: 112px; width: auto;">
+                    </td>
+                @endif
+                <td style="vertical-align: middle;">
+                    <div class="foundation-name">{{ strtoupper($foundationName) }}</div>
                     <div class="unit-name">{{ $unit->name }}</div>
-                    <div class="unit-address">{{ $unit->address ?? 'Kompleks Pendidikan SIT' }} | Telp: {{ $unit->phone ?? '-' }}</div>
+                    <div class="unit-address">{{ $foundationAddress }} | Telp: {{ $foundationPhone }}</div>
                 </td>
-                <td class="receipt-title" style="width: 35%;">
+                <td class="receipt-title" style="width: 175px; vertical-align: middle;">
                     <div class="receipt-badge">KWITANSI RESMI</div>
                     <div class="receipt-number">{{ $payment->receipt_number }}</div>
                     <div style="font-size: 9px; color: #64748b;">Tanggal: {{ $payment->payment_date->translatedFormat('d F Y H:i') }}</div>
@@ -195,7 +208,7 @@
         <tr>
             <td style="width: 60%; vertical-align: top; font-size: 9px; color: #64748b;">
                 <strong>Catatan:</strong><br>
-                - Kwitansi ini merupakan bukti pembayaran sah yang dikeluarkan oleh SmartKas Yayasan Generasi Robbani Sumatera Selatan.<br>
+                - {{ app_setting('invoice_footer_note', 'Kwitansi ini merupakan bukti pembayaran sah yang dikeluarkan oleh SmartKas Yayasan Generasi Robbani Sumatera Selatan.') }}<br>
                 - Harap disimpan sebagai bukti transaksi.<br>
                 - Dicetak oleh: {{ $payment->creator->name ?? 'Admin Keuangan' }} pada {{ now()->translatedFormat('d F Y H:i:s') }}.
             </td>
@@ -207,7 +220,7 @@
                     <div style="font-weight: bold; border-bottom: 1px solid #1e293b; padding-bottom: 2px;">
                         {{ $payment->creator->name ?? 'Admin Keuangan Unit' }}
                     </div>
-                    <div style="font-size: 9px; color: #64748b;">Staf Keuangan SmartKas</div>
+                    <div style="font-size: 9px; color: #64748b;">{{ app_setting('receipt_signer_title', 'Staf Keuangan Yayasan') }}</div>
                 </div>
             </td>
         </tr>

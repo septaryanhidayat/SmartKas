@@ -11,9 +11,11 @@ use App\Models\FeeComponent;
 use App\Models\Invoice;
 use App\Models\Student;
 use App\Models\Unit;
+use App\Services\InvoicePdfService;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\View\View;
 
 class InvoiceController extends Controller
@@ -144,5 +146,12 @@ class InvoiceController extends Controller
         } catch (\Throwable $e) {
             return back()->withInput()->withErrors(['error' => $e->getMessage()]);
         }
+    }
+
+    public function downloadPdf(Invoice $invoice, InvoicePdfService $pdfService): Response
+    {
+        abort_unless(auth()->user()->canAccessUnit((int) $invoice->unit_id), 403);
+
+        return $pdfService->download($invoice);
     }
 }

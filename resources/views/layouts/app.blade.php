@@ -1,15 +1,41 @@
+@php
+    $appSetting = app(\App\Services\AppSettingService::class);
+    $appName = app_setting('app_name', 'SmartKas');
+    $foundationShort = app_setting('foundation_short_name', 'Yayasan Generasi Robbani Sumsel');
+    $foundationName = app_setting('foundation_name', 'Yayasan Generasi Robbani Sumatera Selatan');
+    $academicYear = app_setting('academic_year_label', '2026/2027');
+    $appLogoUrl = app_asset_url(app_setting('app_logo_path', 'images/smartkas-horizontal.png'));
+    $appIconUrl = app_asset_url(app_setting('app_icon_path', 'images/smartkas-icon.png'), 'images/smartkas-icon.png');
+    $activeTheme = $appSetting->activeTheme();
+    $tableDensity = app_setting('table_density', 'comfortable');
+@endphp
 <!DOCTYPE html>
-<html lang="id" class="h-full bg-slate-50">
+<html lang="id" class="h-full bg-slate-50" style="font-size: {{ $appSetting->activeFontSizePx() }}px;">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ isset($title) ? $title . ' - ' : '' }}SmartKas | Yayasan Generasi Robbani</title>
-    <link rel="icon" type="image/png" href="{{ asset('images/smartkas-icon.png') }}">
+    <title>{{ isset($title) ? $title . ' - ' : '' }}{{ $appName }} | {{ $foundationShort }}</title>
+    <link rel="icon" type="image/png" href="{{ $appIconUrl }}">
     @fonts
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <style>
+        :root {
+            --font-sans: {!! $appSetting->activeFontStack() !!};
+            --brand-sidebar: {{ $activeTheme['sidebar'] }};
+            --brand-footer: {{ $activeTheme['footer'] }};
+        }
+        body {
+            font-family: var(--font-sans) !important;
+        }
+        [data-density="compact"] table td,
+        [data-density="compact"] table th {
+            padding-top: 0.45rem !important;
+            padding-bottom: 0.45rem !important;
+        }
+    </style>
 </head>
-<body class="h-screen overflow-hidden antialiased text-slate-800 bg-slate-50 flex" x-data="{ sidebarOpen: false }">
+<body class="h-screen overflow-hidden antialiased text-slate-800 bg-slate-50 flex" data-density="{{ $tableDensity }}" x-data="{ sidebarOpen: false }">
 
     <!-- Mobile Sidebar Backdrop -->
     <div x-show="sidebarOpen" x-cloak @click="sidebarOpen = false"
@@ -21,15 +47,16 @@
          x-transition:leave-end="opacity-0"
          class="fixed inset-0 z-40 bg-slate-950/60 backdrop-blur-sm lg:hidden"></div>
 
-    <!-- Sidebar Navigation (SmartKas Deep Navy) -->
+    <!-- Sidebar Navigation (Deep Institutional Theme) -->
     <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
-           class="fixed inset-y-0 left-0 z-50 w-72 shrink-0 bg-[#062547] text-white flex flex-col h-full transition-transform duration-200 ease-in-out lg:translate-x-0 lg:static lg:inset-auto border-r border-slate-800/40 shadow-2xl lg:shadow-none">
+           style="background-color: var(--brand-sidebar);"
+           class="fixed inset-y-0 left-0 z-50 w-72 shrink-0 text-white flex flex-col h-full transition-transform duration-200 ease-in-out lg:translate-x-0 lg:static lg:inset-auto border-r border-slate-800/40 shadow-2xl lg:shadow-none">
 
-        <!-- SmartKas Official Logo Card -->
+        <!-- App Official Logo Card -->
         <div class="p-4 border-b border-white/10">
             <div class="bg-white rounded-2xl px-4 py-2.5 shadow-md flex items-center justify-between gap-2">
                 <a href="{{ route('dashboard') }}" class="flex items-center">
-                    <img src="{{ asset('images/smartkas-horizontal.png') }}" alt="SmartKas" class="h-8 w-auto object-contain">
+                    <img src="{{ $appLogoUrl }}" alt="{{ $appName }}" class="h-8 w-auto object-contain">
                 </a>
                 <button @click="sidebarOpen = false" class="lg:hidden p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -37,8 +64,8 @@
                     </svg>
                 </button>
             </div>
-            <div class="mt-2.5 px-1 flex items-center justify-between text-[10px] text-teal-200/85 font-semibold tracking-wide">
-                <span class="truncate">Yayasan Generasi Robbani Sumsel</span>
+            <div class="mt-2.5 px-1 flex items-center justify-between gap-2 text-[10px] text-teal-200/85 font-semibold tracking-wide">
+                <span class="leading-tight">{{ $foundationShort }}</span>
                 <span class="px-1.5 py-0.5 rounded bg-white/10 text-white shrink-0">4 Unit</span>
             </div>
         </div>
@@ -142,7 +169,7 @@
                 <span>Rekap Tunggakan SPP</span>
             </a>
 
-            @if(auth()->user()->can('manage-closing-periods') || auth()->user()->can('view-audit-logs'))
+            @if(auth()->user()->can('manage-closing-periods') || auth()->user()->can('view-audit-logs') || auth()->user()->can('manage-settings'))
                 <div class="pt-4 pb-1 text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-3">
                     Tata Kelola &amp; Audit
                 </div>
@@ -166,12 +193,23 @@
                         <span>Audit Trail (Log)</span>
                     </a>
                 @endcan
+
+                @can('manage-settings')
+                    <a href="{{ route('settings.index') }}"
+                       class="flex items-center gap-3 px-3 py-2 rounded-xl transition {{ request()->routeIs('settings.*') ? 'bg-teal-600 text-white font-bold shadow-md shadow-teal-950/30' : 'text-slate-200 hover:bg-white/10 hover:text-white' }}">
+                        <svg class="w-5 h-5 shrink-0 {{ request()->routeIs('settings.*') ? 'text-white' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        </svg>
+                        <span>Pengaturan Aplikasi</span>
+                    </a>
+                @endcan
             @endif
 
         </nav>
 
         <!-- Current User Profile in Footer -->
-        <div class="p-3.5 border-t border-white/10 bg-[#041B35]">
+        <div class="p-3.5 border-t border-white/10" style="background-color: var(--brand-footer);">
             <div class="flex items-center justify-between gap-2.5">
                 <div class="flex items-center gap-2.5 min-w-0">
                     <div class="w-9 h-9 rounded-xl bg-teal-600 text-white font-extrabold text-sm flex items-center justify-center shrink-0 shadow-sm">
@@ -210,9 +248,9 @@
                 <div class="flex items-center gap-2 min-w-0">
                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-teal-50 text-[#0B3B6F] border border-teal-200 truncate">
                         <span class="w-2 h-2 rounded-full bg-teal-500 shrink-0"></span>
-                        <span class="truncate">{{ auth()->user()->unit?->name ?? 'Yayasan Generasi Robbani (Pusat Konsolidasi)' }}</span>
+                        <span class="truncate">{{ auth()->user()->unit?->name ?? "{$foundationName} (Pusat Konsolidasi)" }}</span>
                     </span>
-                    <span class="text-xs text-slate-400 font-medium hidden md:inline shrink-0">&bull; TA 2026/2027</span>
+                    <span class="text-xs text-slate-400 font-medium hidden md:inline shrink-0">&bull; TA {{ $academicYear }}</span>
                 </div>
             </div>
 

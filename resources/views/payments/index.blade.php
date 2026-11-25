@@ -63,27 +63,29 @@
                 <tbody class="divide-y divide-slate-100">
                     @forelse($payments as $p)
                         <tr class="hover:bg-slate-50 transition">
-                            <td class="py-3 px-4 font-mono font-bold text-slate-900">{{ $p->receipt_number }}</td>
-                            <td class="py-3 px-4 text-slate-600">{{ $p->payment_date->translatedFormat('d/m/Y H:i') }}</td>
-                            <td class="py-3 px-4">
-                                <div class="font-bold text-slate-900">{{ $p->student->name }}</div>
+                            <td class="py-3 px-4 whitespace-nowrap">
+                                <x-code-badge :code="$p->receipt_number" />
+                            </td>
+                            <td class="py-3 px-4 text-slate-600 whitespace-nowrap font-mono">{{ $p->payment_date->translatedFormat('d/m/Y H:i') }}</td>
+                            <td class="py-3 px-4 min-w-[160px]">
+                                <div class="font-bold text-slate-900 leading-snug">{{ $p->student->name }}</div>
                                 <div class="text-[11px] text-slate-400 font-medium">
-                                    {{ $p->unit->code->value }} • {{ $p->student->classroom?->name ?? 'NIS: ' . $p->student->nis }}
+                                    {{ $p->unit->code->value }} &bull; {{ $p->student->classroom?->name ?? 'NIS: ' . $p->student->nis }}
                                 </div>
                             </td>
                             <td class="py-3 px-4">
-                                <div class="font-medium text-slate-800">{{ $p->payment_method->label() }}</div>
-                                <div class="text-[10px] text-slate-400">{{ $p->cashAccount->name }}</div>
+                                <div class="font-medium text-slate-800 whitespace-nowrap">{{ $p->payment_method->label() }}</div>
+                                <div class="text-[10px] text-slate-400 leading-tight">{{ $p->cashAccount->name }}</div>
                             </td>
-                            <td class="py-3 px-4 text-right font-bold text-emerald-700 text-sm">
+                            <td class="py-3 px-4 text-right font-bold text-emerald-700 text-sm font-mono tabular-nums whitespace-nowrap">
                                 {{ format_rupiah($p->total_amount) }}
                             </td>
-                            <td class="py-3 px-4 text-center">
-                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold {{ $p->status->value === 'completed' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800' }}">
+                            <td class="py-3 px-4 text-center whitespace-nowrap">
+                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold inline-block {{ $p->status->value === 'completed' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800' }}">
                                     {{ $p->status->label() }}
                                 </span>
                             </td>
-                            <td class="py-3 px-4 text-center">
+                            <td class="py-3 px-4 text-center whitespace-nowrap">
                                 <div class="flex items-center justify-center gap-1.5">
                                     <a href="{{ route('payments.show', $p) }}" class="p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 transition" title="Lihat Detail Transaksi">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>

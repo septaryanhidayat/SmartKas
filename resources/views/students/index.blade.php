@@ -69,35 +69,35 @@
                 <tbody class="divide-y divide-slate-100">
                     @forelse($students as $st)
                         <tr class="hover:bg-slate-50/70 transition">
-                            <td class="py-3 px-4 font-mono font-semibold text-slate-900">{{ $st->nis }}</td>
-                            <td class="py-3 px-4">
+                            <td class="py-3 px-4 font-mono font-semibold text-slate-900 whitespace-nowrap">{{ $st->nis }}</td>
+                            <td class="py-3 px-4 min-w-[160px]">
                                 <div class="font-bold text-slate-900">{{ $st->name }}</div>
                             </td>
-                            <td class="py-3 px-4">
+                            <td class="py-3 px-4 whitespace-nowrap">
                                 <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-700">
                                     {{ $st->unit->code->value }}
                                 </span>
                                 <div class="text-slate-600 font-medium mt-0.5">{{ $st->classroom?->name ?? 'Belum ada kelas' }}</div>
                             </td>
-                            <td class="py-3 px-4">
+                            <td class="py-3 px-4 min-w-[150px]">
                                 <div class="font-medium text-slate-800">{{ $st->parent_name }}</div>
-                                <div class="text-[11px] text-slate-400 font-mono">{{ $st->parent_whatsapp }}</div>
+                                <div class="text-[11px] text-slate-400 font-mono whitespace-nowrap">{{ $st->parent_whatsapp }}</div>
                             </td>
                             <td class="py-3 px-4">
                                 @forelse($st->studentDiscounts as $sd)
-                                    <span class="inline-block px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 mb-1">
+                                    <span class="inline-block px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 mb-1 whitespace-nowrap">
                                         {{ $sd->discount->name }}
                                     </span>
                                 @empty
-                                    <span class="text-slate-400 text-[11px]">Normal (Tanpa Potongan)</span>
+                                    <span class="text-slate-400 text-[11px] whitespace-nowrap">Normal (Tanpa Potongan)</span>
                                 @endforelse
                             </td>
-                            <td class="py-3 px-4">
-                                <span class="px-2.5 py-1 rounded-full text-[10px] font-bold {{ $st->status->value === 'active' ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-600' }}">
+                            <td class="py-3 px-4 whitespace-nowrap">
+                                <span class="px-2.5 py-1 rounded-full text-[10px] font-bold inline-block {{ $st->status->value === 'active' ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-600' }}">
                                     {{ $st->status->label() }}
                                 </span>
                             </td>
-                            <td class="py-3 px-4 text-center">
+                            <td class="py-3 px-4 text-center whitespace-nowrap">
                                 <div class="flex items-center justify-center gap-1.5">
                                     <a href="{{ route('students.show', $st) }}" class="p-1.5 rounded-lg bg-slate-100 hover:bg-emerald-100 text-slate-600 hover:text-emerald-700 transition" title="Lihat Profil & Tagihan">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>

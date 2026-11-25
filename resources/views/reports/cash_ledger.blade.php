@@ -106,17 +106,17 @@
                 <tbody class="divide-y divide-slate-100">
                     @forelse($report['mutations'] as $m)
                         <tr class="hover:bg-slate-50 transition">
-                            <td class="py-3 px-4 text-slate-500 font-mono">{{ $m->transaction_date->translatedFormat('d/m/Y H:i') }}</td>
-                            <td class="py-3 px-4 font-bold text-slate-700">{{ $m->unit?->code->value ?? 'YAYASAN' }}</td>
-                            <td class="py-3 px-4 text-slate-600">{{ $m->cashAccount->name }}</td>
-                            <td class="py-3 px-4 text-slate-800">{{ $m->description }}</td>
-                            <td class="py-3 px-4 text-right font-bold text-emerald-700">
+                            <td class="py-3 px-4 text-slate-500 font-mono whitespace-nowrap">{{ $m->transaction_date->translatedFormat('d/m/Y H:i') }}</td>
+                            <td class="py-3 px-4 font-bold text-slate-700 whitespace-nowrap">{{ $m->unit?->code->value ?? 'YAYASAN' }}</td>
+                            <td class="py-3 px-4 text-slate-600 min-w-[140px]">{{ $m->cashAccount->name }}</td>
+                            <td class="py-3 px-4 text-slate-800" title="{{ $m->description }}">{{ format_ledger_description($m->description) }}</td>
+                            <td class="py-3 px-4 text-right font-bold text-emerald-700 font-mono tabular-nums whitespace-nowrap">
                                 {{ $m->type->value === 'in' ? format_rupiah($m->amount) : '-' }}
                             </td>
-                            <td class="py-3 px-4 text-right font-bold text-rose-700">
+                            <td class="py-3 px-4 text-right font-bold text-rose-700 font-mono tabular-nums whitespace-nowrap">
                                 {{ $m->type->value === 'out' ? format_rupiah($m->amount) : '-' }}
                             </td>
-                            <td class="py-3 px-4 text-right font-mono font-bold text-slate-900">
+                            <td class="py-3 px-4 text-right font-mono font-bold text-slate-900 tabular-nums whitespace-nowrap">
                                 {{ format_rupiah($m->balance_after) }}
                             </td>
                         </tr>

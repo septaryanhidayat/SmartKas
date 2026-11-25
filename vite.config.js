@@ -12,6 +12,18 @@ export default defineConfig({
                 bunny('Plus Jakarta Sans', {
                     weights: [400, 500, 600, 700, 800],
                 }),
+                bunny('Inter', {
+                    weights: [400, 500, 600, 700, 800],
+                }),
+                bunny('Poppins', {
+                    weights: [400, 500, 600, 700, 800],
+                }),
+                bunny('Nunito', {
+                    weights: [400, 500, 600, 700, 800],
+                }),
+                bunny('Roboto', {
+                    weights: [400, 500, 700],
+                }),
                 bunny('JetBrains Mono', {
                     weights: [400, 500, 600, 700],
                 }),

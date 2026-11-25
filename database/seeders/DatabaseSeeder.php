@@ -61,6 +61,7 @@ class DatabaseSeeder extends Seeder
             'export-reports',
             'manage-closing-periods',
             'view-audit-logs',
+            'manage-settings',
         ];
 
         foreach ($permissions as $permission) {
@@ -87,6 +88,7 @@ class DatabaseSeeder extends Seeder
             'export-reports',
             'manage-closing-periods',
             'view-audit-logs',
+            'manage-settings',
         ]);
 
         $principalRole = Role::firstOrCreate(['name' => UserRole::PRINCIPAL->value]);
@@ -111,11 +113,13 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // 3. Create Units: Yayasan Generasi Robbani Sumatera Selatan & 4 Units
+        $officialAddress = 'Jl. Sarjana Blok A No. 25 Timbangan, Indralaya Utara, Ogan Ilir';
+
         $yayasan = Unit::create([
             'code' => UnitCode::YAYASAN,
             'name' => 'Yayasan Generasi Robbani Sumatera Selatan',
             'level' => UnitLevel::FOUNDATION,
-            'address' => 'Jl. Pangeran Ayin No. 88, Sako, Palembang, Sumatera Selatan',
+            'address' => $officialAddress,
             'phone' => '0711-820123',
             'principal_name' => 'Sughesti Wulandari, S.Pd',
             'is_active' => true,
@@ -125,7 +129,7 @@ class DatabaseSeeder extends Seeder
             'code' => UnitCode::TKIT,
             'name' => 'KB/TKIT Robbani',
             'level' => UnitLevel::TK,
-            'address' => 'Jl. Pangeran Ayin No. 88A, Sako, Palembang, Sumatera Selatan',
+            'address' => $officialAddress,
             'phone' => '0711-820124',
             'principal_name' => 'Ani',
             'is_active' => true,
@@ -135,7 +139,7 @@ class DatabaseSeeder extends Seeder
             'code' => UnitCode::SDIT,
             'name' => 'SDIT Robbani',
             'level' => UnitLevel::SD,
-            'address' => 'Jl. Pangeran Ayin No. 88B, Sako, Palembang, Sumatera Selatan',
+            'address' => $officialAddress,
             'phone' => '0711-820125',
             'principal_name' => 'Nur',
             'is_active' => true,
@@ -145,7 +149,7 @@ class DatabaseSeeder extends Seeder
             'code' => UnitCode::SMPIT,
             'name' => 'SMPIT Robbani',
             'level' => UnitLevel::SMP,
-            'address' => 'Jl. Pangeran Ayin No. 88C, Sako, Palembang, Sumatera Selatan',
+            'address' => $officialAddress,
             'phone' => '0711-820126',
             'principal_name' => 'Tia',
             'is_active' => true,
@@ -155,7 +159,7 @@ class DatabaseSeeder extends Seeder
             'code' => UnitCode::SMAIT,
             'name' => 'SMAIT Robbani',
             'level' => UnitLevel::SMA,
-            'address' => 'Jl. Pangeran Ayin No. 88D, Sako, Palembang, Sumatera Selatan',
+            'address' => $officialAddress,
             'phone' => '0711-820127',
             'principal_name' => 'Kepala Sekolah SMAIT Robbani',
             'is_active' => true,

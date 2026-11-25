@@ -112,16 +112,16 @@
                                         <td class="py-3 px-4 text-center">
                                             <input type="checkbox" x-model="checked" name="items[{{ $index }}][invoice_id]" value="{{ $inv->id }}" class="rounded text-teal-600 focus:ring-teal-500 w-4 h-4 cursor-pointer item-checkbox">
                                         </td>
-                                        <td class="py-3 px-4 font-mono font-bold text-slate-800">{{ $inv->invoice_number }}</td>
+                                        <td class="py-3 px-4 whitespace-nowrap"><x-code-badge :code="$inv->invoice_number" /></td>
                                         <td class="py-3 px-4 font-semibold text-slate-900">
                                             {{ $inv->feeComponent->name }}
                                             @if($inv->discount_amount > 0)
-                                                <div class="text-[10px] text-emerald-600">Diskon: {{ format_rupiah($inv->discount_amount) }}</div>
+                                                <div class="text-[10px] text-emerald-600 whitespace-nowrap">Diskon: {{ format_rupiah($inv->discount_amount) }}</div>
                                             @endif
                                         </td>
-                                        <td class="py-3 px-4 text-slate-600">{{ $inv->billing_month ? "{$inv->billing_month}/{$inv->billing_year}" : '-' }}</td>
-                                        <td class="py-3 px-4 text-right font-medium text-slate-700">{{ format_rupiah($inv->net_amount) }}</td>
-                                        <td class="py-3 px-4 text-right font-bold text-amber-700">{{ format_rupiah($inv->remaining_amount) }}</td>
+                                        <td class="py-3 px-4 text-slate-600 whitespace-nowrap">{{ $inv->billing_month ? "{$inv->billing_month}/{$inv->billing_year}" : '-' }}</td>
+                                        <td class="py-3 px-4 text-right font-medium text-slate-700 font-mono tabular-nums whitespace-nowrap">{{ format_rupiah($inv->net_amount) }}</td>
+                                        <td class="py-3 px-4 text-right font-bold text-amber-700 font-mono tabular-nums whitespace-nowrap">{{ format_rupiah($inv->remaining_amount) }}</td>
                                         <td class="py-3 px-4 text-right">
                                             <input type="number" name="items[{{ $index }}][amount]" x-model.number="amount" :disabled="!checked" max="{{ $inv->remaining_amount }}" min="1"
                                                 class="w-full text-right font-bold text-xs rounded-xl border border-slate-300 bg-white px-3 py-1.5 focus:ring-2 focus:ring-teal-500 disabled:bg-slate-100 disabled:text-slate-400">

@@ -28,6 +28,26 @@
     <!-- Payment Detail Card -->
     <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6 space-y-6">
 
+        <!-- Official Kop Surat Header -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b-2 border-[#0B3B6F]">
+            <div class="flex items-center gap-4">
+                <img src="{{ app_asset_url(app_setting('foundation_logo_path', 'images/yayasan-logo.png'), 'images/yayasan-logo.png') }}" alt="Logo Yayasan" class="h-12 w-auto object-contain shrink-0">
+                <div>
+                    <div class="text-[11px] font-extrabold text-[#0B3B6F] uppercase tracking-wide">
+                        {{ app_setting('foundation_name', 'Yayasan Generasi Robbani Sumatera Selatan') }}
+                    </div>
+                    <div class="text-sm font-black text-teal-700 uppercase">{{ $payment->unit->name }}</div>
+                    <div class="text-[11px] text-slate-500 mt-0.5">
+                        {{ app_setting('foundation_address', 'Jl. Sarjana Blok A No. 25 Timbangan, Indralaya Utara, Ogan Ilir') }}
+                    </div>
+                </div>
+            </div>
+            <div class="sm:text-right shrink-0">
+                <div class="text-xs font-extrabold text-[#0B3B6F] tracking-widest uppercase">KWITANSI RESMI</div>
+                <div class="mt-1"><x-code-badge :code="$payment->receipt_number" /></div>
+            </div>
+        </div>
+
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pb-6 border-b border-slate-100 text-xs">
             <div>
                 <span class="text-slate-400 block mb-1">Informasi Siswa</span>
@@ -61,20 +81,20 @@
                     <tbody class="divide-y divide-slate-100">
                         @foreach($payment->items as $item)
                             <tr>
-                                <td class="py-3 px-4 font-mono font-bold text-slate-800">{{ $item->invoice->invoice_number }}</td>
+                                <td class="py-3 px-4 whitespace-nowrap"><x-code-badge :code="$item->invoice->invoice_number" /></td>
                                 <td class="py-3 px-4 font-semibold text-slate-900">
                                     {{ $item->invoice->feeComponent->name }}
                                     @if($item->invoice->billing_month)
                                         <span class="text-slate-400 text-[11px] font-normal">(Bulan {{ $item->invoice->billing_month }}/{{ $item->invoice->billing_year }})</span>
                                     @endif
                                 </td>
-                                <td class="py-3 px-4 text-right font-medium text-slate-600">{{ format_rupiah($item->invoice->net_amount) }}</td>
-                                <td class="py-3 px-4 text-right font-bold text-emerald-700">{{ format_rupiah($item->amount) }}</td>
+                                <td class="py-3 px-4 text-right font-medium text-slate-600 font-mono tabular-nums whitespace-nowrap">{{ format_rupiah($item->invoice->net_amount) }}</td>
+                                <td class="py-3 px-4 text-right font-bold text-emerald-700 font-mono tabular-nums whitespace-nowrap">{{ format_rupiah($item->amount) }}</td>
                             </tr>
                         @endforeach
                         <tr class="bg-slate-50/80 font-bold text-sm">
                             <td colspan="3" class="py-3 px-4 text-right">TOTAL DIBAYAR:</td>
-                            <td class="py-3 px-4 text-right text-emerald-700">{{ format_rupiah($payment->total_amount) }}</td>
+                            <td class="py-3 px-4 text-right text-emerald-700 font-mono tabular-nums whitespace-nowrap">{{ format_rupiah($payment->total_amount) }}</td>
                         </tr>
                     </tbody>
                 </table>
