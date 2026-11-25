@@ -7,7 +7,6 @@ namespace App\Services;
 use App\Models\AppSetting;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
 
 class AppSettingService
 {
@@ -116,17 +115,22 @@ class AppSettingService
     ];
 
     /**
+     * @var array<string, string>|null
+     */
+    protected ?array $resolved = null;
+
+    /**
      * @return array<string, string>
      */
     public function all(): array
     {
+        if ($this->resolved !== null) {
+            return $this->resolved;
+        }
+
         $defaults = array_map(fn (array $meta): string => $meta['value'], self::DEFAULTS);
 
         try {
-            if (! Schema::hasTable('app_settings')) {
-                return $defaults;
-            }
-
             $stored = Cache::remember(self::CACHE_KEY, now()->addHours(12), function (): array {
                 return AppSetting::query()
                     ->pluck('value', 'key')
@@ -134,7 +138,7 @@ class AppSettingService
                     ->all();
             });
 
-            return array_merge($defaults, $stored);
+            return $this->resolved = array_merge($defaults, $stored);
         } catch (\Throwable) {
             return $defaults;
         }
@@ -172,6 +176,7 @@ class AppSettingService
 
     public function clearCache(): void
     {
+        $this->resolved = null;
         Cache::forget(self::CACHE_KEY);
     }
 

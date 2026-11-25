@@ -93,7 +93,7 @@
                         @php
                             $stName = $arr->student?->name ?? 'Siswa Arsip';
                             $compName = $arr->feeComponent?->name ?? '-';
-                            $waText = urlencode("Assalamu'alaikum Wr. Wb. Yth. Orang Tua dari {$stName}. Kami mengingatkan terdapat tagihan {$compName} (No: {$arr->invoice_number}) sebesar " . format_rupiah($arr->remaining_amount) . " dengan jatuh tempo {$arr->due_date->format('d/m/Y')}. Mohon untuk melakukan penyelesaian melalui kasir sekolah. Terima kasih.");
+                            $waText = urlencode("Assalamu'alaikum Wr. Wb. Yth. Orang Tua dari {$stName}. Kami mengingatkan terdapat tagihan {$compName} (No: {$arr->invoice_number}) sebesar " . format_rupiah($arr->remaining_amount) . ' dengan jatuh tempo ' . ($arr->due_date?->format('d/m/Y') ?? '-') . '. Mohon untuk melakukan penyelesaian melalui kasir sekolah. Terima kasih.');
                             $waLink = $arr->student?->parent_whatsapp ? "https://wa.me/{$arr->student->parent_whatsapp}?text={$waText}" : null;
                         @endphp
                         <tr class="hover:bg-slate-50 transition">
@@ -115,7 +115,7 @@
                                 @endif
                             </td>
                             <td class="py-3 px-4 text-rose-600 font-semibold whitespace-nowrap font-mono">
-                                {{ $arr->due_date->format('d/m/Y') }}
+                                {{ $arr->due_date?->format('d/m/Y') ?? '-' }}
                             </td>
                             <td class="py-3 px-4 text-right font-black text-amber-700 text-sm font-mono tabular-nums whitespace-nowrap">
                                 {{ format_rupiah($arr->remaining_amount) }}
