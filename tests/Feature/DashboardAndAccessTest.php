@@ -2,7 +2,12 @@
 
 declare(strict_types=1);
 
+use App\Enums\InvoiceStatus;
 use App\Enums\UnitCode;
+use App\Models\AcademicYear;
+use App\Models\FeeComponent;
+use App\Models\Invoice;
+use App\Models\Student;
 use App\Models\Unit;
 use App\Models\User;
 use Database\Seeders\DatabaseSeeder;
@@ -82,4 +87,41 @@ it('supports paginated arrears search and unit isolation overrides safely', func
         ->assertStatus(200)
         ->assertSee('KB/TKIT Robbani')
         ->assertDontSee('SDIT Robbani');
+});
+
+it('renders arrears report safely even when unpaid invoices belong to soft-deleted students', function () {
+    $bendahara = User::where('email', 'dessy@sitrobbani.sch.id')->firstOrFail();
+    $student = Student::withoutGlobalScope('unit_scope')->firstOrFail();
+    $component = FeeComponent::withoutGlobalScope('unit_scope')->where('unit_id', $student->unit_id)->firstOrFail();
+    $year = AcademicYear::getActive();
+
+    Invoice::create([
+        'unit_id' => $student->unit_id,
+        'student_id' => $student->id,
+        'fee_component_id' => $component->id,
+        'academic_year_id' => $year->id,
+        'invoice_number' => 'INV-ORPHAN-0001',
+        'billing_month' => 11,
+        'billing_year' => 2026,
+        'due_date' => '2026-11-10',
+        'gross_amount' => 300000,
+        'discount_amount' => 0,
+        'net_amount' => 300000,
+        'paid_amount' => 0,
+        'status' => InvoiceStatus::UNPAID,
+        'created_by' => $bendahara->id,
+    ]);
+
+    $student->delete();
+
+    $this->actingAs($bendahara)
+        ->get(route('reports.arrears', ['search' => 'INV-ORPHAN-0001']))
+        ->assertStatus(200)
+        ->assertSee($student->name)
+        ->assertSee('1 Lembar');
+
+    $this->actingAs($bendahara)
+        ->get(route('invoices.index', ['search' => 'INV-ORPHAN-0001']))
+        ->assertStatus(200)
+        ->assertSee($student->name);
 });

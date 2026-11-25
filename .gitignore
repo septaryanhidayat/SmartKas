@@ -25,4 +25,5 @@ _ide_helper.php
 Homestead.json
 Homestead.yaml
 Thumbs.db
-/database/pesonaas_db_arsi.sql
+/database/*.sql
+/database/*.zip

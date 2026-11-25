@@ -40,7 +40,7 @@ class Student extends Model
 
     public function classroom(): BelongsTo
     {
-        return $this->belongsTo(Classroom::class);
+        return $this->belongsTo(Classroom::class)->withTrashed();
     }
 
     public function studentDiscounts(): HasMany

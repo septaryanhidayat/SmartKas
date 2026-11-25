@@ -61,7 +61,7 @@ class Payment extends Model
 
     public function student(): BelongsTo
     {
-        return $this->belongsTo(Student::class);
+        return $this->belongsTo(Student::class)->withTrashed();
     }
 
     public function cashAccount(): BelongsTo
@@ -71,12 +71,12 @@ class Payment extends Model
 
     public function creator(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'created_by');
+        return $this->belongsTo(User::class, 'created_by')->withTrashed();
     }
 
     public function voidedBy(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'voided_by');
+        return $this->belongsTo(User::class, 'voided_by')->withTrashed();
     }
 
     public function items(): HasMany

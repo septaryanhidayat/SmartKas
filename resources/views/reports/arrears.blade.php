@@ -91,23 +91,25 @@
                 <tbody class="divide-y divide-slate-100">
                     @forelse($arrears as $arr)
                         @php
-                            $waText = urlencode("Assalamu'alaikum Wr. Wb. Yth. Orang Tua dari {$arr->student->name}. Kami mengingatkan terdapat tagihan {$arr->feeComponent->name} (No: {$arr->invoice_number}) sebesar " . format_rupiah($arr->remaining_amount) . " dengan jatuh tempo {$arr->due_date->format('d/m/Y')}. Mohon untuk melakukan penyelesaian melalui kasir sekolah. Terima kasih.");
-                            $waLink = $arr->student->parent_whatsapp ? "https://wa.me/{$arr->student->parent_whatsapp}?text={$waText}" : null;
+                            $stName = $arr->student?->name ?? 'Siswa Arsip';
+                            $compName = $arr->feeComponent?->name ?? '-';
+                            $waText = urlencode("Assalamu'alaikum Wr. Wb. Yth. Orang Tua dari {$stName}. Kami mengingatkan terdapat tagihan {$compName} (No: {$arr->invoice_number}) sebesar " . format_rupiah($arr->remaining_amount) . " dengan jatuh tempo {$arr->due_date->format('d/m/Y')}. Mohon untuk melakukan penyelesaian melalui kasir sekolah. Terima kasih.");
+                            $waLink = $arr->student?->parent_whatsapp ? "https://wa.me/{$arr->student->parent_whatsapp}?text={$waText}" : null;
                         @endphp
                         <tr class="hover:bg-slate-50 transition">
                             <td class="py-3 px-4 whitespace-nowrap">
                                 <x-code-badge :code="$arr->invoice_number" />
                             </td>
                             <td class="py-3 px-4 min-w-[160px]">
-                                <div class="font-bold text-slate-900 leading-snug">{{ $arr->student->name }}</div>
-                                <div class="text-[10px] text-slate-400 font-mono">{{ $arr->student->nis }}</div>
+                                <div class="font-bold text-slate-900 leading-snug">{{ $stName }}</div>
+                                <div class="text-[10px] text-slate-400 font-mono">{{ $arr->student?->nis ?? '-' }}</div>
                             </td>
                             <td class="py-3 px-4 whitespace-nowrap">
-                                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-700">{{ $arr->unit->code->value }}</span>
-                                <div class="text-slate-600 font-medium mt-0.5">{{ $arr->student->classroom?->name }}</div>
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-700">{{ $arr->unit?->code?->value ?? '-' }}</span>
+                                <div class="text-slate-600 font-medium mt-0.5">{{ $arr->student?->classroom?->name ?? '-' }}</div>
                             </td>
                             <td class="py-3 px-4 font-semibold text-slate-800 min-w-[140px]">
-                                <div class="leading-snug">{{ $arr->feeComponent->name }}</div>
+                                <div class="leading-snug">{{ $compName }}</div>
                                 @if($arr->billing_month)
                                     <div class="text-[10px] text-slate-400 font-normal whitespace-nowrap">Bln {{ $arr->billing_month }}/{{ $arr->billing_year }}</div>
                                 @endif

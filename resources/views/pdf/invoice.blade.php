@@ -189,21 +189,21 @@
     <table class="meta-table">
         <tr>
             <td style="width: 16%; color: #64748b;">Nama Siswa</td>
-            <td style="width: 34%; font-weight: bold;">: {{ $student->name }}</td>
+            <td style="width: 34%; font-weight: bold;">: {{ $student?->name ?? 'Siswa Arsip' }}</td>
             <td style="width: 18%; color: #64748b;">Tahun Ajaran</td>
             <td style="width: 32%; font-weight: bold;">: {{ $invoice->academicYear?->name ?? app_setting('academic_year_label', '2026/2027') }}</td>
         </tr>
         <tr>
             <td style="color: #64748b;">NIS / NISN</td>
-            <td>: {{ $student->nis }}{{ $student->nisn ? ' / ' . $student->nisn : '' }}</td>
+            <td>: {{ $student?->nis ?? '-' }}{{ $student?->nisn ? ' / ' . $student->nisn : '' }}</td>
             <td style="color: #64748b;">Periode Tagihan</td>
             <td>: {{ $invoice->billing_month ? "Bulan {$invoice->billing_month}/{$invoice->billing_year}" : 'Tagihan Insidentil / Tahunan' }}</td>
         </tr>
         <tr>
             <td style="color: #64748b;">Kelas / Unit</td>
-            <td>: {{ $student->classroom?->name ?? '-' }} ({{ $unit->code->value }})</td>
+            <td>: {{ $student?->classroom?->name ?? '-' }} ({{ $unit?->code?->value ?? '-' }})</td>
             <td style="color: #64748b;">Orang Tua / Wali</td>
-            <td>: {{ $student->parent_name }}</td>
+            <td>: {{ $student?->parent_name ?? '-' }}</td>
         </tr>
     </table>
 
@@ -221,7 +221,7 @@
             <tr>
                 <td>1</td>
                 <td>
-                    <strong>{{ $invoice->feeComponent->name }}</strong>
+                    <strong>{{ $invoice->feeComponent?->name ?? '-' }}</strong>
                     @if($invoice->notes)
                         <div style="font-size: 9.5px; color: #64748b; margin-top: 2px;">{{ $invoice->notes }}</div>
                     @endif

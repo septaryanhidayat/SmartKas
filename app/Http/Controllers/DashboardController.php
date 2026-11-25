@@ -99,8 +99,8 @@ class DashboardController extends Controller
         if ($unitId) {
             $arrearsQuery->where('unit_id', $unitId);
         }
-        $totalArrears = (int) $arrearsQuery->selectRaw('SUM(net_amount - paid_amount) as total')->value('total');
-        $arrearsStudentsCount = (clone $arrearsQuery)->distinct('student_id')->count('student_id');
+        $totalArrears = (int) $arrearsQuery->selectRaw('COALESCE(SUM(CAST(net_amount AS SIGNED) - CAST(paid_amount AS SIGNED)), 0) as total')->value('total');
+        $arrearsStudentsCount = (clone $arrearsQuery)->distinct()->count('student_id');
 
         // 5. Total Siswa Aktif
         $studentsCountQuery = Student::withoutGlobalScope('unit_scope')->where('status', 'active');

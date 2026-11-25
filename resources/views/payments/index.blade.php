@@ -68,14 +68,14 @@
                             </td>
                             <td class="py-3 px-4 text-slate-600 whitespace-nowrap font-mono">{{ $p->payment_date->translatedFormat('d/m/Y H:i') }}</td>
                             <td class="py-3 px-4 min-w-[160px]">
-                                <div class="font-bold text-slate-900 leading-snug">{{ $p->student->name }}</div>
+                                <div class="font-bold text-slate-900 leading-snug">{{ $p->student?->name ?? 'Siswa Arsip' }}</div>
                                 <div class="text-[11px] text-slate-400 font-medium">
-                                    {{ $p->unit->code->value }} &bull; {{ $p->student->classroom?->name ?? 'NIS: ' . $p->student->nis }}
+                                    {{ $p->unit?->code?->value ?? '-' }} &bull; {{ $p->student?->classroom?->name ?? 'NIS: ' . ($p->student?->nis ?? '-') }}
                                 </div>
                             </td>
                             <td class="py-3 px-4">
                                 <div class="font-medium text-slate-800 whitespace-nowrap">{{ $p->payment_method->label() }}</div>
-                                <div class="text-[10px] text-slate-400 leading-tight">{{ $p->cashAccount->name }}</div>
+                                <div class="text-[10px] text-slate-400 leading-tight">{{ $p->cashAccount?->name ?? '-' }}</div>
                             </td>
                             <td class="py-3 px-4 text-right font-bold text-emerald-700 text-sm font-mono tabular-nums whitespace-nowrap">
                                 {{ format_rupiah($p->total_amount) }}

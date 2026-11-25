@@ -149,19 +149,19 @@
     <table class="meta-table">
         <tr>
             <td style="width: 15%; color: #64748b;">Nama Siswa</td>
-            <td style="width: 35%; font-weight: bold;">: {{ $student->name }}</td>
+            <td style="width: 35%; font-weight: bold;">: {{ $student?->name ?? 'Siswa Arsip' }}</td>
             <td style="width: 18%; color: #64748b;">Metode Bayar</td>
             <td style="width: 32%; font-weight: bold;">: {{ $payment->payment_method->label() }}</td>
         </tr>
         <tr>
             <td style="color: #64748b;">NIS / NISN</td>
-            <td>: {{ $student->nis }} {{ $student->nisn ? '/ ' . $student->nisn : '' }}</td>
+            <td>: {{ $student?->nis ?? '-' }} {{ $student?->nisn ? '/ ' . $student->nisn : '' }}</td>
             <td style="color: #64748b;">Akun Penerima</td>
-            <td>: {{ $payment->cashAccount->name }}</td>
+            <td>: {{ $payment->cashAccount?->name ?? '-' }}</td>
         </tr>
         <tr>
             <td style="color: #64748b;">Kelas / Unit</td>
-            <td>: {{ $student->classroom?->name ?? '-' }} ({{ $unit->code->value }})</td>
+            <td>: {{ $student?->classroom?->name ?? '-' }} ({{ $unit?->code?->value ?? '-' }})</td>
             <td style="color: #64748b;">No. Referensi</td>
             <td>: {{ $payment->reference_number ?? '-' }}</td>
         </tr>

@@ -51,17 +51,17 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pb-6 border-b border-slate-100 text-xs">
             <div>
                 <span class="text-slate-400 block mb-1">Informasi Siswa</span>
-                <div class="font-bold text-base text-slate-900">{{ $payment->student->name }}</div>
-                <div class="text-slate-500 mt-0.5">NIS: {{ $payment->student->nis }} | Kelas: {{ $payment->student->classroom?->name }} ({{ $payment->unit->name }})</div>
-                <div class="text-slate-500">Wali: {{ $payment->student->parent_name }} (WA: {{ $payment->student->parent_whatsapp }})</div>
+                <div class="font-bold text-base text-slate-900">{{ $payment->student?->name ?? 'Siswa Arsip' }}</div>
+                <div class="text-slate-500 mt-0.5">NIS: {{ $payment->student?->nis ?? '-' }} | Kelas: {{ $payment->student?->classroom?->name ?? '-' }} ({{ $payment->unit?->name ?? '-' }})</div>
+                <div class="text-slate-500">Wali: {{ $payment->student?->parent_name ?? '-' }} (WA: {{ $payment->student?->parent_whatsapp ?? '-' }})</div>
             </div>
 
             <div>
                 <span class="text-slate-400 block mb-1">Informasi Transaksi</span>
                 <div class="font-bold text-slate-800">Tanggal: {{ $payment->payment_date->translatedFormat('d F Y H:i:s') }}</div>
                 <div class="text-slate-600">Metode: <strong class="text-slate-800">{{ $payment->payment_method->label() }}</strong></div>
-                <div class="text-slate-600">Akun Kas: <strong class="text-slate-800">{{ $payment->cashAccount->name }}</strong></div>
-                <div class="text-slate-400 mt-1">Dicatat oleh: {{ $payment->creator->name ?? 'Admin Keuangan' }}</div>
+                <div class="text-slate-600">Akun Kas: <strong class="text-slate-800">{{ $payment->cashAccount?->name ?? '-' }}</strong></div>
+                <div class="text-slate-400 mt-1">Dicatat oleh: {{ $payment->creator?->name ?? 'Admin Keuangan' }}</div>
             </div>
         </div>
 

@@ -61,12 +61,12 @@ class Invoice extends Model
 
     public function student(): BelongsTo
     {
-        return $this->belongsTo(Student::class);
+        return $this->belongsTo(Student::class)->withTrashed();
     }
 
     public function feeComponent(): BelongsTo
     {
-        return $this->belongsTo(FeeComponent::class);
+        return $this->belongsTo(FeeComponent::class)->withTrashed();
     }
 
     public function academicYear(): BelongsTo
@@ -76,7 +76,7 @@ class Invoice extends Model
 
     public function creator(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'created_by');
+        return $this->belongsTo(User::class, 'created_by')->withTrashed();
     }
 
     public function paymentItems(): HasMany

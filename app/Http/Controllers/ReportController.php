@@ -148,9 +148,12 @@ class ReportController extends Controller
 
         $baseQuery = $this->reportService->getArrearsQuery($unitId, $classroomId, null, $search);
 
-        $totalArrearsAmount = (int) (clone $baseQuery)->selectRaw('COALESCE(SUM(net_amount - paid_amount), 0) as total')->value('total');
-        $totalArrearsCount = (clone $baseQuery)->count();
-        $arrearsStudentsCount = (clone $baseQuery)->distinct('student_id')->count('student_id');
+        $totalArrearsAmount = (int) (clone $baseQuery)
+            ->reorder()
+            ->selectRaw('COALESCE(SUM(CAST(net_amount AS SIGNED) - CAST(paid_amount AS SIGNED)), 0) as total')
+            ->value('total');
+        $totalArrearsCount = (clone $baseQuery)->reorder()->count();
+        $arrearsStudentsCount = (clone $baseQuery)->reorder()->distinct()->count('student_id');
 
         $arrears = $baseQuery->paginate(25)->withQueryString();
 

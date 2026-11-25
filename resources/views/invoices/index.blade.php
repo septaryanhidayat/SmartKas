@@ -83,13 +83,13 @@
                                 <x-code-badge :code="$inv->invoice_number" />
                             </td>
                             <td class="py-3 px-4 min-w-[170px]">
-                                <div class="font-bold text-slate-900 leading-snug">{{ $inv->student->name }}</div>
+                                <div class="font-bold text-slate-900 leading-snug">{{ $inv->student?->name ?? 'Siswa Arsip' }}</div>
                                 <div class="text-[11px] text-slate-500 font-medium mt-0.5">
-                                    {{ $inv->unit->code->value }} &bull; {{ $inv->student->classroom?->name ?? 'NIS: ' . $inv->student->nis }}
+                                    {{ $inv->unit?->code?->value ?? '-' }} &bull; {{ $inv->student?->classroom?->name ?? 'NIS: ' . ($inv->student?->nis ?? '-') }}
                                 </div>
                             </td>
                             <td class="py-3 px-4 font-semibold text-slate-800 min-w-[140px]">
-                                <div class="leading-snug">{{ $inv->feeComponent->name }}</div>
+                                <div class="leading-snug">{{ $inv->feeComponent?->name ?? '-' }}</div>
                                 @if($inv->discount_amount > 0)
                                     <div class="text-[10px] text-emerald-600 font-medium whitespace-nowrap">Potongan: {{ format_rupiah($inv->discount_amount) }}</div>
                                 @endif
