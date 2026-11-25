@@ -7,6 +7,7 @@ namespace App\Http\Controllers;
 use App\Enums\ExpenseStatus;
 use App\Enums\InvoiceStatus;
 use App\Enums\PaymentStatus;
+use App\Enums\UserRole;
 use App\Models\CashAccount;
 use App\Models\CashLedger;
 use App\Models\ExpenseRequest;
@@ -14,6 +15,7 @@ use App\Models\Invoice;
 use App\Models\Payment;
 use App\Models\Student;
 use App\Models\Unit;
+use App\Models\User;
 use App\Services\ClosingPeriodService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -30,23 +32,29 @@ class DashboardController extends Controller
         $user = auth()->user();
         $activeUnitId = $request->query('unit_id');
 
-        // If user is restricted to a unit, enforce it
+        // Enforce strict unit isolation for unit-bound users
         if ($user->unit_id) {
             $activeUnitId = (string) $user->unit_id;
         }
 
         $unitId = $activeUnitId ? (int) $activeUnitId : null;
-        $units = Unit::where('is_active', true)->where('level', '!=', 'foundation')->get();
+
+        // Filter selector units: all school units for Yayasan-level users, or only user's own unit
+        $unitsQuery = Unit::where('is_active', true)->where('level', '!=', 'foundation')->orderBy('id');
+        if ($user->unit_id) {
+            $unitsQuery->where('id', $user->unit_id);
+        }
+        $units = $unitsQuery->get();
 
         // 1. Total Saldo Kas & Bank
         $cashAccountsQuery = CashAccount::withoutGlobalScope('unit_scope')->where('is_active', true);
         if ($unitId) {
             $cashAccountsQuery->where('unit_id', $unitId);
         }
-        $cashAccounts = $cashAccountsQuery->orderBy('type')->get();
+        $cashAccounts = $cashAccountsQuery->orderBy('type')->orderBy('id')->get();
         $totalBalance = (int) $cashAccounts->sum('current_balance');
 
-        // 2. Total Pemasukan Bulan Ini
+        // 2. Total Pemasukan Bulan Ini & Hari Ini
         $startOfMonth = Carbon::now()->startOfMonth();
         $endOfMonth = Carbon::now()->endOfMonth();
         $startOfDay = Carbon::now()->startOfDay();
@@ -60,7 +68,6 @@ class DashboardController extends Controller
         }
         $monthlyIncome = (int) $incomeQuery->sum('total_amount');
 
-        // Today Income
         $todayIncomeQuery = Payment::withoutGlobalScope('unit_scope')
             ->where('status', PaymentStatus::COMPLETED)
             ->whereBetween('payment_date', [$startOfDay, $endOfDay]);
@@ -69,7 +76,7 @@ class DashboardController extends Controller
         }
         $todayIncome = (int) $todayIncomeQuery->sum('total_amount');
 
-        // 3. Total Pengeluaran Bulan Ini
+        // 3. Total Pengeluaran Bulan Ini & Hari Ini
         $expenseQuery = ExpenseRequest::withoutGlobalScope('unit_scope')
             ->where('status', ExpenseStatus::DISBURSED)
             ->whereBetween('disbursed_at', [$startOfMonth, $endOfMonth]);
@@ -78,7 +85,6 @@ class DashboardController extends Controller
         }
         $monthlyExpense = (int) $expenseQuery->sum('approved_amount');
 
-        // Today Expense
         $todayExpenseQuery = ExpenseRequest::withoutGlobalScope('unit_scope')
             ->where('status', ExpenseStatus::DISBURSED)
             ->whereBetween('disbursed_at', [$startOfDay, $endOfDay]);
@@ -94,8 +100,6 @@ class DashboardController extends Controller
             $arrearsQuery->where('unit_id', $unitId);
         }
         $totalArrears = (int) $arrearsQuery->selectRaw('SUM(net_amount - paid_amount) as total')->value('total');
-
-        // Arrears Students Count
         $arrearsStudentsCount = (clone $arrearsQuery)->distinct('student_id')->count('student_id');
 
         // 5. Total Siswa Aktif
@@ -127,9 +131,15 @@ class DashboardController extends Controller
         }
         $pendingExpenses = $pendingExpensesQuery->get();
 
-        // 8. Breakdown per Unit Sekolah (untuk ringkasan eksekutif)
+        // 8. Breakdown per Unit Sekolah (strictly scoped for unit users)
         $unitSummaries = [];
-        foreach ($units as $u) {
+        $summaryUnits = $unitId ? $units->where('id', $unitId) : $units;
+
+        $unitAdminsMap = User::whereNotNull('unit_id')
+            ->role(UserRole::FINANCE_ADMIN->value)
+            ->pluck('name', 'unit_id');
+
+        foreach ($summaryUnits as $u) {
             $uStudentCount = Student::withoutGlobalScope('unit_scope')->where('unit_id', $u->id)->where('status', 'active')->count();
 
             $uMonthlyBilled = (int) Invoice::withoutGlobalScope('unit_scope')
@@ -150,10 +160,11 @@ class DashboardController extends Controller
                 ->selectRaw('SUM(net_amount - paid_amount) as total')
                 ->value('total');
 
-            $collectionRate = $uMonthlyBilled > 0 ? min(100, round(($uMonthlyPaid / $uMonthlyBilled) * 100, 1)) : 100.0;
+            $collectionRate = $uMonthlyBilled > 0 ? min(100.0, round(($uMonthlyPaid / $uMonthlyBilled) * 100, 1)) : 100.0;
 
             $unitSummaries[] = [
                 'unit' => $u,
+                'admin_name' => $unitAdminsMap[$u->id] ?? 'Admin Unit',
                 'student_count' => $uStudentCount,
                 'monthly_billed' => $uMonthlyBilled,
                 'monthly_paid' => $uMonthlyPaid,

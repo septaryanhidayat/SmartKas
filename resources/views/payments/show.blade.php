@@ -92,8 +92,8 @@
                 <div>Alasan: {{ $payment->void_reason }}</div>
                 <div class="text-[11px] text-rose-600">Dibatalkan oleh {{ $payment->voidedBy->name ?? 'Petugas' }} pada {{ $payment->voided_at?->translatedFormat('d F Y H:i') }}</div>
             </div>
-        @else
-            <!-- Void Cancellation Form (Only for Treasurer / Superadmin / Finance Admin) -->
+        @elseif(auth()->user()->can('void-payments'))
+            <!-- Void Cancellation Form (Only for Treasurer / Superadmin) -->
             <div class="pt-6 border-t border-slate-100 flex items-center justify-between">
                 <div class="text-xs text-slate-400">
                     Salah input transaksi pembayaran? Lakukan pembatalan (void) dengan catatan alasan wajib.

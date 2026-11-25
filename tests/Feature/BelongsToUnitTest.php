@@ -11,7 +11,7 @@ beforeEach(function () {
 });
 
 it('scopes student queries automatically by unit for unit admin', function () {
-    $adminSdit = User::where('email', 'admin.sdit@sit.sch.id')->first();
+    $adminSdit = User::where('email', 'sd@sitrobbani.sch.id')->first();
     $this->actingAs($adminSdit);
 
     $sditStudents = Student::all();
@@ -22,7 +22,7 @@ it('scopes student queries automatically by unit for unit admin', function () {
 });
 
 it('prevents unit admin from seeing other units students via HTTP', function () {
-    $adminSdit = User::where('email', 'admin.sdit@sit.sch.id')->first();
+    $adminSdit = User::where('email', 'sd@sitrobbani.sch.id')->first();
     $smpitStudent = Student::withoutGlobalScope('unit_scope')
         ->where('unit_id', '!=', $adminSdit->unit_id)
         ->first();
@@ -33,7 +33,7 @@ it('prevents unit admin from seeing other units students via HTTP', function () 
 });
 
 it('allows superadmin to view students across all units', function () {
-    $superadmin = User::where('email', 'superadmin@sit.sch.id')->first();
+    $superadmin = User::where('email', 'sughesti@sitrobbani.sch.id')->first();
     $this->actingAs($superadmin);
 
     $allStudents = Student::all();

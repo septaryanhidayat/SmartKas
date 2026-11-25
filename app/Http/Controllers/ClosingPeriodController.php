@@ -15,7 +15,9 @@ class ClosingPeriodController extends Controller
 {
     public function index(Request $request): View
     {
-        $units = Unit::where('is_active', true)->get();
+        abort_unless(auth()->user()->can('manage-closing-periods'), 403);
+
+        $units = Unit::where('is_active', true)->where('level', '!=', 'foundation')->orderBy('id')->get();
         $periods = ClosingPeriod::with(['unit', 'closedBy'])
             ->orderBy('year', 'desc')
             ->orderBy('month', 'desc')
@@ -26,6 +28,8 @@ class ClosingPeriodController extends Controller
 
     public function close(Request $request, CloseMonthlyPeriodAction $action): RedirectResponse
     {
+        abort_unless(auth()->user()->can('manage-closing-periods'), 403);
+
         $validated = $request->validate([
             'year' => ['required', 'integer', 'min:2020'],
             'month' => ['required', 'integer', 'between:1,12'],
@@ -50,6 +54,7 @@ class ClosingPeriodController extends Controller
 
     public function reopen(Request $request, CloseMonthlyPeriodAction $action): RedirectResponse
     {
+        abort_unless(auth()->user()->can('manage-closing-periods'), 403);
         $validated = $request->validate([
             'year' => ['required', 'integer'],
             'month' => ['required', 'integer'],

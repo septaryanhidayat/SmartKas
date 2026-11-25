@@ -5,8 +5,8 @@
 
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-            <h2 class="text-2xl font-black text-slate-900 tracking-tight">Data Siswa 4 Unit SIT</h2>
-            <p class="text-xs text-slate-500 mt-0.5">Daftar siswa KB/TKIT, SDIT, SMPIT, SMAIT dan penerima beasiswa/diskon.</p>
+            <h2 class="text-2xl font-black text-slate-900 tracking-tight">Data Siswa Yayasan Generasi Robbani</h2>
+            <p class="text-xs text-slate-500 mt-0.5">Daftar siswa KB/TKIT, SDIT, SMPIT, SMAIT Robbani dan penerima beasiswa/diskon.</p>
         </div>
     </div>
 

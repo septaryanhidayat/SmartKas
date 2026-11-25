@@ -108,6 +108,13 @@ class PaymentController extends Controller
             'items.*.amount' => ['required', 'integer', 'min:1'],
         ]);
 
+        $cashAccount = CashAccount::findOrFail((int) $validated['cash_account_id']);
+        $student = Student::findOrFail((int) $validated['student_id']);
+        abort_unless(auth()->user()->canAccessUnit((int) $student->unit_id), 403);
+        if ($cashAccount->unit_id && ! auth()->user()->canAccessUnit((int) $cashAccount->unit_id)) {
+            abort(403, 'Akun kas bukan milik unit Anda.');
+        }
+
         $paymentMethod = PaymentMethod::from($validated['payment_method']);
         $paymentDate = ! empty($validated['payment_date']) ? Carbon::parse($validated['payment_date']) : Carbon::now();
 
@@ -152,6 +159,8 @@ class PaymentController extends Controller
 
     public function voidPayment(Request $request, Payment $payment, VoidStudentPaymentAction $action): RedirectResponse
     {
+        abort_unless(auth()->user()->can('void-payments'), 403, 'Anda tidak memiliki hak akses untuk membatalkan kwitansi.');
+
         $validated = $request->validate([
             'void_reason' => ['required', 'string', 'min:5', 'max:255'],
         ]);

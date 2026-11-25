@@ -61,7 +61,7 @@ Unduh e-Kwitansi PDF resmi:
 {$receiptUrl}
 
 Jazakumullahu Khairan Katsiran atas kepercayaannya menitipkan pendidikan putra/putri di sekolah kami.
-_Pesan otomatis Sistem Keuangan Yayasan SIT_
+_Pesan otomatis SmartKas • Yayasan Generasi Robbani Sumatera Selatan_
 TEXT;
 
         // Check if an external WhatsApp API provider is configured (Fonnte/Wablas/WA Gateway)

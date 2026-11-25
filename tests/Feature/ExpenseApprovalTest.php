@@ -25,9 +25,9 @@ it('follows multi-stage approval flow from submit to disbursement', function () 
     $cashAccount = CashAccount::where('unit_id', $unit->id)->first();
     $initialBalance = $cashAccount->current_balance;
 
-    $admin = User::where('email', 'admin.sdit@sit.sch.id')->first();
-    $kepsek = User::where('email', 'kepsek.sdit@sit.sch.id')->first();
-    $bendahara = User::where('email', 'bendahara@sit.sch.id')->first();
+    $admin = User::where('email', 'sd@sitrobbani.sch.id')->first();
+    $kepsek = User::where('email', 'nur@sitrobbani.sch.id')->first();
+    $bendahara = User::where('email', 'dessy@sitrobbani.sch.id')->first();
 
     $submitAction = app(SubmitExpenseRequestAction::class);
     $approveAction = app(ApproveExpenseRequestAction::class);

@@ -1,6 +1,6 @@
-# Sistem Keuangan Terpusat Yayasan Generasi Robbani Sumatera Selatan
+# SmartKas — Sistem Keuangan Terpusat Yayasan Generasi Robbani Sumatera Selatan
 
-Aplikasi web manajemen keuangan terpusat yang dirancang khusus untuk **Bendahara Yayasan** dan **Admin Keuangan Unit** guna mengelola arus kas, tagihan SPP, penerimaan kasir, pengajuan anggaran, dan pelaporan keuangan secara transparan, akurat, dan terisolasi untuk **4 unit sekolah Islam terpadu**:
+Aplikasi web manajemen keuangan terpusat (**SmartKas**) yang dirancang khusus untuk **Bendahara Yayasan** dan **Admin Keuangan Unit** guna mengelola arus kas, tagihan SPP, penerimaan kasir, pengajuan anggaran, dan pelaporan keuangan secara transparan, akurat, dan terisolasi untuk **4 unit sekolah Islam terpadu**:
 1. **KB/TKIT Robbani**
 2. **SDIT Robbani**
 3. **SMPIT Robbani**
@@ -13,7 +13,7 @@ Aplikasi web manajemen keuangan terpusat yang dirancang khusus untuk **Bendahara
 * **Framework:** Laravel 13.x
 * **Bahasa:** PHP 8.4 (menggunakan *Strict Types*, *Backed Enums*, *Typed Properties*)
 * **Database:** MySQL 8.x (*InnoDB, utf8mb4_unicode_ci, BigInteger Rupiah*)
-* **Frontend:** Blade + Tailwind CSS + Alpine.js
+* **Frontend:** Blade + Tailwind CSS v4 (Vite) + Alpine.js
 * **PDF & Excel:** `barryvdh/laravel-dompdf` & `maatwebsite/excel`
 * **RBAC:** `spatie/laravel-permission`
 * **Audit Trail:** `spatie/laravel-activitylog`
@@ -28,15 +28,19 @@ Sistem telah dikonfigurasi dengan struktur organisasi resmi **Yayasan Generasi R
 
 | Peran / Jabatan | Nama Pejabat & Pengelola | Email Login | Cakupan Otoritas |
 | :--- | :--- | :--- | :--- |
-| **Ketua Yayasan** | **Sughesti Wulandari, S.Pd** | `superadmin@sit.sch.id` | Superadmin (Seluruh Unit & Kebijakan) |
-| **Bendahara Yayasan** | **Dessy Aprianty, S.E.** | `bendahara@sit.sch.id` | Otorisator Kas, Pencairan & Tutup Buku |
-| **Admin Yayasan** | **Anis Monica, S.H.** | `admin.yayasan@sit.sch.id` | Pusat Pembayaran Siswa Seluruh Unit |
-| **Admin TKIT** | **Rojanah, S.E.** | `admin.tkit@sit.sch.id` | Kasir & Tagihan KB/TKIT Robbani |
-| **Admin SDIT** | **Risma, S.Pd** | `admin.sdit@sit.sch.id` | Kasir & Tagihan SDIT Robbani |
-| **Admin SMPIT** | **Adelia Jesika, S.Pd** | `admin.smpit@sit.sch.id` | Kasir & Tagihan SMPIT Robbani |
-| **Admin SMAIT** | **Admin Keuangan SMAIT Robbani** | `admin.smait@sit.sch.id` | Kasir & Tagihan SMAIT Robbani |
+| **Ketua Yayasan** | **Sughesti Wulandari, S.Pd** | `sughesti@sitrobbani.sch.id` | Superadmin (Seluruh Unit & Kebijakan) |
+| **Bendahara Yayasan** | **Dessy Aprianty, S.E.** | `dessy@sitrobbani.sch.id` | Otorisator Kas, Pencairan & Tutup Buku |
+| **Admin Yayasan** | **Anis Monica, S.H.** | `anis@sitrobbani.sch.id` | Pusat Pembayaran Siswa Seluruh Unit |
+| **Admin TKIT** | **Rojanah, S.E.** | `tk@sitrobbani.sch.id` | Kasir & Tagihan KB/TKIT Robbani |
+| **Admin SDIT** | **Risma, S.Pd** | `sd@sitrobbani.sch.id` | Kasir & Tagihan SDIT Robbani |
+| **Admin SMPIT** | **Adelia Jesika, S.Pd** | `smp@sitrobbani.sch.id` | Kasir & Tagihan SMPIT Robbani |
+| **Admin SMAIT** | **Admin Keuangan SMAIT Robbani** | `sma@sitrobbani.sch.id` | Kasir & Tagihan SMAIT Robbani |
+| **Kepsek TKIT** | **Ani** | `ani@sitrobbani.sch.id` | Persetujuan Tahap 1 KB/TKIT Robbani |
+| **Kepsek SDIT** | **Nur** | `nur@sitrobbani.sch.id` | Persetujuan Tahap 1 SDIT Robbani |
+| **Kepsek SMPIT** | **Tia** | `tia@sitrobbani.sch.id` | Persetujuan Tahap 1 SMPIT Robbani |
+| **Kepsek SMAIT** | **Kepala Sekolah SMAIT Robbani** | `kepsek.sma@sitrobbani.sch.id` | Persetujuan Tahap 1 SMAIT Robbani |
 
-*Kata Sandi Default Pengujian:* `password123` (Tersedia juga tombol 1-Click Quick Login di `/login`).
+*Kata Sandi Default Awal:* `password123` (Harap segera diganti di lingkungan produksi).
 
 ---
 
@@ -108,4 +112,4 @@ php artisan billing:generate-monthly --unit=2 --month=7 --year=2026
 ```
 
 ---
-&copy; {{ date('Y') }} Yayasan Pendidikan Islam Terpadu. All rights reserved.
+&copy; 2026 SmartKas — Yayasan Generasi Robbani Sumatera Selatan. All rights reserved.

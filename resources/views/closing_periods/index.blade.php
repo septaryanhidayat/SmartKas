@@ -6,7 +6,7 @@
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
             <h2 class="text-2xl font-black text-slate-900 tracking-tight">Tutup Buku Periode Keuangan</h2>
-            <p class="text-xs text-slate-500 mt-0.5">Kunci transaksi keuangan per bulan/tahun agar bersifat permanen (*immutable*) dan tidak dapat dimanipulasi.</p>
+            <p class="text-xs text-slate-500 mt-0.5">Kunci transaksi keuangan per bulan/tahun agar bersifat permanen (immutable) dan tidak dapat dimanipulasi.</p>
         </div>
 
         <!-- Form Close Period Modal / Button (Bendahara & Superadmin) -->

@@ -1,18 +1,18 @@
-# Konteks Proyek: Sistem Keuangan Terpusat Yayasan Generasi Robbani Sumatera Selatan
+# Konteks Proyek: SmartKas — Sistem Keuangan Terpusat Yayasan Generasi Robbani Sumatera Selatan
 
 Dokumen ini adalah panduan utama (*always-on context*) untuk Agent di **Antigravity IDE**.
 
 ## 1. Gambaran Umum Proyek
-Aplikasi web manajemen keuangan terpusat untuk **Yayasan Generasi Robbani Sumatera Selatan** yang menaungi **4 unit sekolah Islam Terpadu**:
-1. **KB/TKIT Robbani** (Admin: Rojanah, S.E.)
-2. **SDIT Robbani** (Admin: Risma, S.Pd)
-3. **SMPIT Robbani** (Admin: Adelia Jesika, S.Pd)
-4. **SMAIT Robbani** (Admin: Admin Keuangan SMAIT Robbani)
+Aplikasi web manajemen keuangan terpusat (**SmartKas**) untuk **Yayasan Generasi Robbani Sumatera Selatan** yang menaungi **4 unit sekolah Islam Terpadu**:
+1. **KB/TKIT Robbani** (Kepsek: Ani [`ani@sitrobbani.sch.id`], Admin: Rojanah, S.E. [`tk@sitrobbani.sch.id`])
+2. **SDIT Robbani** (Kepsek: Nur [`nur@sitrobbani.sch.id`], Admin: Risma, S.Pd [`sd@sitrobbani.sch.id`])
+3. **SMPIT Robbani** (Kepsek: Tia [`tia@sitrobbani.sch.id`], Admin: Adelia Jesika, S.Pd [`smp@sitrobbani.sch.id`])
+4. **SMAIT Robbani** (Admin: Admin Keuangan SMAIT Robbani [`sma@sitrobbani.sch.id`])
 
 Pusat Yayasan:
-* **Ketua Yayasan:** Sughesti Wulandari, S.Pd (Superadmin)
-* **Bendahara Yayasan:** Dessy Aprianty, S.E. (Otorisator Keuangan Terpusat & Pencairan Dana)
-* **Admin Yayasan (Pusat Pembayaran Siswa):** Anis Monica, S.H. (Kasir Terpusat 4 Unit)
+* **Ketua Yayasan:** Sughesti Wulandari, S.Pd (`sughesti@sitrobbani.sch.id` - Superadmin)
+* **Bendahara Yayasan:** Dessy Aprianty, S.E. (`dessy@sitrobbani.sch.id` - Otorisator Keuangan Terpusat & Pencairan Dana)
+* **Admin Yayasan (Pusat Pembayaran Siswa):** Anis Monica, S.H. (`anis@sitrobbani.sch.id` - Kasir Terpusat 4 Unit)
 
 Fokus utama aplikasi adalah akurasi pencatatan kas, manajemen tagihan & pembayaran siswa (termasuk cicilan), persetujuan pengeluaran berjenjang, pelaporan konsolidasi Yayasan vs per Unit, serta keamanan audit (*Audit Trail* & *Tutup Buku*).
 

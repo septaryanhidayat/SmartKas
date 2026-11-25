@@ -98,7 +98,7 @@
         @endif
 
         <!-- Approval & Disbursement Actions -->
-        @if(!in_array($expense->status->value, ['disbursed', 'rejected', 'void']))
+        @if(!in_array($expense->status->value, ['disbursed', 'rejected', 'void']) && (auth()->user()->can('approve-expense-principal') || auth()->user()->can('approve-expense-treasurer') || auth()->user()->can('disburse-expense')))
             <div class="pt-6 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3">
                 <div class="text-xs text-slate-500">
                     Aksi Persetujuan untuk Pengajuan ini:
@@ -106,7 +106,7 @@
 
                 <div class="flex flex-wrap items-center gap-2">
                     <!-- Action: Approve Principal (Level 1) -->
-                    @if($expense->status->value === 'submitted')
+                    @if($expense->status->value === 'submitted' && auth()->user()->can('approve-expense-principal'))
                         <form action="{{ route('expenses.approve-principal', $expense) }}" method="POST">
                             @csrf
                             <button type="submit" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md transition">
@@ -116,7 +116,7 @@
                     @endif
 
                     <!-- Action: Approve Treasurer (Level 2) -->
-                    @if(in_array($expense->status->value, ['submitted', 'approved_principal']))
+                    @if(in_array($expense->status->value, ['submitted', 'approved_principal']) && auth()->user()->can('approve-expense-treasurer'))
                         <form action="{{ route('expenses.approve-treasurer', $expense) }}" method="POST" class="flex items-center gap-2">
                             @csrf
                             <input type="number" name="approved_amount" value="{{ $expense->requested_amount }}" class="w-32 text-xs font-bold rounded-xl border border-slate-300 p-2" title="Sesuaikan nominal jika disetujui sebagian">
@@ -127,7 +127,7 @@
                     @endif
 
                     <!-- Action: Disburse Funds -->
-                    @if($expense->status->value === 'approved_treasurer')
+                    @if($expense->status->value === 'approved_treasurer' && auth()->user()->can('disburse-expense'))
                         <form action="{{ route('expenses.disburse', $expense) }}" method="POST" class="flex items-center gap-2">
                             @csrf
                             <select name="cash_account_id" required class="text-xs font-medium rounded-xl border border-slate-300 p-2">
@@ -144,27 +144,29 @@
                     @endif
 
                     <!-- Action: Reject Modal -->
-                    <div x-data="{ open: false }">
-                        <button type="button" @click="open = true" class="px-3.5 py-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold transition">
-                            Tolak
-                        </button>
-                        <div x-show="open" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4">
-                            <div @click.away="open = false" class="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl space-y-4">
-                                <h3 class="text-base font-bold text-slate-900">Tolak Pengajuan Dana</h3>
-                                <form action="{{ route('expenses.reject', $expense) }}" method="POST" class="space-y-4">
-                                    @csrf
-                                    <div>
-                                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Alasan Penolakan *</label>
-                                        <textarea name="rejection_reason" required rows="3" class="w-full text-xs rounded-xl border border-slate-200 p-3" placeholder="Tulis alasan penolakan..."></textarea>
-                                    </div>
-                                    <div class="flex justify-end gap-2">
-                                        <button type="button" @click="open = false" class="px-3 py-1.5 rounded-xl bg-slate-100 text-slate-600 text-xs">Batal</button>
-                                        <button type="submit" class="px-4 py-1.5 rounded-xl bg-rose-600 text-white font-bold text-xs">Tolak Pengajuan</button>
-                                    </div>
-                                </form>
+                    @if(auth()->user()->can('approve-expense-principal') || auth()->user()->can('approve-expense-treasurer'))
+                        <div x-data="{ open: false }">
+                            <button type="button" @click="open = true" class="px-3.5 py-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold transition">
+                                Tolak
+                            </button>
+                            <div x-show="open" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4">
+                                <div @click.away="open = false" class="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl space-y-4">
+                                    <h3 class="text-base font-bold text-slate-900">Tolak Pengajuan Dana</h3>
+                                    <form action="{{ route('expenses.reject', $expense) }}" method="POST" class="space-y-4">
+                                        @csrf
+                                        <div>
+                                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Alasan Penolakan *</label>
+                                            <textarea name="rejection_reason" required rows="3" class="w-full text-xs rounded-xl border border-slate-200 p-3" placeholder="Tulis alasan penolakan..."></textarea>
+                                        </div>
+                                        <div class="flex justify-end gap-2">
+                                            <button type="button" @click="open = false" class="px-3 py-1.5 rounded-xl bg-slate-100 text-slate-600 text-xs">Batal</button>
+                                            <button type="submit" class="px-4 py-1.5 rounded-xl bg-rose-600 text-white font-bold text-xs">Tolak Pengajuan</button>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    @endif
                 </div>
             </div>
         @endif

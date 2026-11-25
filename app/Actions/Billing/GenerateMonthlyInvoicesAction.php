@@ -12,11 +12,16 @@ use App\Models\FeeComponent;
 use App\Models\Invoice;
 use App\Models\Student;
 use App\Models\Unit;
+use App\Services\ClosingPeriodService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class GenerateMonthlyInvoicesAction
 {
+    public function __construct(
+        protected ClosingPeriodService $closingPeriodService
+    ) {}
+
     /**
      * Generate monthly recurring billing invoices for active students.
      *
@@ -34,6 +39,8 @@ class GenerateMonthlyInvoicesAction
         $academicYear = AcademicYear::findOrFail($academicYearId);
         $due = $dueDate ?? Carbon::create($year, $month, 10);
         $creatorId = $createdByUserId ?? auth()->id() ?? 1;
+
+        $this->closingPeriodService->ensurePeriodIsOpen($unitId, Carbon::create($year, $month, 1));
 
         // Fetch all active monthly components for this unit and academic year
         $monthlyComponents = FeeComponent::query()

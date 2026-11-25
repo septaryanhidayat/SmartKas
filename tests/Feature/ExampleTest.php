@@ -13,10 +13,10 @@ it('redirects unauthenticated guests to login page', function () {
 });
 
 it('allows authenticated users to view dashboard', function () {
-    $user = User::where('email', 'superadmin@sit.sch.id')->first();
+    $user = User::where('email', 'sughesti@sitrobbani.sch.id')->first();
     $response = $this->actingAs($user)->get('/dashboard');
     $response->assertStatus(200);
     $response->assertSee('Dashboard Ringkasan Keuangan');
-    $response->assertSee('Sughesti Wulandari');
-    $response->assertSee('GENERASI ROBBANI');
+    $response->assertSee('Sughesti Wulandari, S.Pd');
+    $response->assertSee('Yayasan Generasi Robbani');
 });

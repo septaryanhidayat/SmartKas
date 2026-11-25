@@ -49,14 +49,16 @@ class ExpenseController extends Controller
         $user = auth()->user();
         $unitId = $user->unit_id;
 
-        $units = Unit::where('is_active', true)->get();
+        $units = Unit::where('is_active', true)
+            ->when($unitId, fn ($q) => $q->where('id', $unitId))
+            ->when(! $unitId, fn ($q) => $q->where('level', '!=', 'foundation'))
+            ->orderBy('id')
+            ->get();
         $categories = ExpenseCategory::where('is_active', true)->get();
 
         $cashAccountsQuery = CashAccount::where('is_active', true);
         if ($unitId) {
-            $cashAccountsQuery->where(function ($q) use ($unitId) {
-                $q->where('unit_id', $unitId)->orWhereNull('unit_id');
-            });
+            $cashAccountsQuery->where('unit_id', $unitId);
         }
         $cashAccounts = $cashAccountsQuery->get();
 
@@ -76,9 +78,11 @@ class ExpenseController extends Controller
             'expense_type' => ['required', 'string'],
             'amount' => ['required', 'integer', 'min:1000'],
             'transaction_date' => ['nullable', 'date'],
-            'cash_account_id' => ['nullable', 'exists:cash_accounts,id'],
+            'cash_account_id' => ['required_if:is_direct,1', 'nullable', 'exists:cash_accounts,id'],
             'is_direct' => ['nullable', 'boolean'],
         ]);
+
+        abort_unless(auth()->user()->canAccessUnit((int) $validated['unit_id']), 403, 'Anda tidak memiliki akses untuk unit sekolah tersebut.');
 
         $date = ! empty($validated['transaction_date']) ? Carbon::parse($validated['transaction_date']) : Carbon::now();
         $expenseType = ExpenseType::from($validated['expense_type']);
@@ -139,6 +143,8 @@ class ExpenseController extends Controller
 
     public function approvePrincipal(ExpenseRequest $expense, ApproveExpenseRequestAction $action): RedirectResponse
     {
+        abort_unless(auth()->user()->can('approve-expense-principal'), 403);
+
         try {
             $action->approveByPrincipal($expense, auth()->id());
 
@@ -150,6 +156,8 @@ class ExpenseController extends Controller
 
     public function approveTreasurer(Request $request, ExpenseRequest $expense, ApproveExpenseRequestAction $action): RedirectResponse
     {
+        abort_unless(auth()->user()->can('approve-expense-treasurer'), 403);
+
         $validated = $request->validate([
             'approved_amount' => ['nullable', 'integer', 'min:1'],
             'cash_account_id' => ['nullable', 'exists:cash_accounts,id'],
@@ -171,6 +179,8 @@ class ExpenseController extends Controller
 
     public function disburse(Request $request, ExpenseRequest $expense, DisburseExpenseAction $action): RedirectResponse
     {
+        abort_unless(auth()->user()->can('disburse-expense'), 403);
+
         $validated = $request->validate([
             'cash_account_id' => ['required', 'exists:cash_accounts,id'],
             'disbursement_date' => ['nullable', 'date'],
@@ -194,6 +204,10 @@ class ExpenseController extends Controller
 
     public function reject(Request $request, ExpenseRequest $expense, ApproveExpenseRequestAction $action): RedirectResponse
     {
+        abort_unless(
+            auth()->user()->can('approve-expense-principal') || auth()->user()->can('approve-expense-treasurer'),
+            403
+        );
         $validated = $request->validate([
             'rejection_reason' => ['required', 'string', 'min:5', 'max:255'],
         ]);

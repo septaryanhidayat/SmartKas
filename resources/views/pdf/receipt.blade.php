@@ -195,7 +195,7 @@
         <tr>
             <td style="width: 60%; vertical-align: top; font-size: 9px; color: #64748b;">
                 <strong>Catatan:</strong><br>
-                - Kwitansi ini merupakan bukti pembayaran sah yang dikeluarkan oleh Sistem Keuangan Yayasan SIT.<br>
+                - Kwitansi ini merupakan bukti pembayaran sah yang dikeluarkan oleh SmartKas Yayasan Generasi Robbani Sumatera Selatan.<br>
                 - Harap disimpan sebagai bukti transaksi.<br>
                 - Dicetak oleh: {{ $payment->creator->name ?? 'Admin Keuangan' }} pada {{ now()->translatedFormat('d F Y H:i:s') }}.
             </td>
@@ -207,7 +207,7 @@
                     <div style="font-weight: bold; border-bottom: 1px solid #1e293b; padding-bottom: 2px;">
                         {{ $payment->creator->name ?? 'Admin Keuangan Unit' }}
                     </div>
-                    <div style="font-size: 9px; color: #64748b;">NIP/Staff Keuangan SIT</div>
+                    <div style="font-size: 9px; color: #64748b;">Staf Keuangan SmartKas</div>
                 </div>
             </td>
         </tr>

@@ -81,8 +81,8 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Akun Kas / Bank Pemotong *</label>
-                    <select name="cash_account_id" class="w-full text-xs rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5">
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Akun Kas / Bank Pemotong <span x-show="isDirect == 1">*</span></label>
+                    <select name="cash_account_id" :required="isDirect == 1" class="w-full text-xs rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5">
                         <option value="">-- Tentukan Akun Kas / Bank --</option>
                         @foreach($cashAccounts as $ca)
                             <option value="{{ $ca->id }}">{{ $ca->name }} (Saldo: {{ format_rupiah($ca->current_balance) }})</option>

@@ -12,6 +12,8 @@ class AuditLogController extends Controller
 {
     public function index(Request $request): View
     {
+        abort_unless(auth()->user()->can('view-audit-logs'), 403);
+
         $logs = Activity::with('causer')
             ->orderBy('created_at', 'desc')
             ->paginate(25);

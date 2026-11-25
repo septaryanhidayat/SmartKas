@@ -56,7 +56,11 @@ class InvoiceController extends Controller
         $user = auth()->user();
         $unitId = $user->unit_id;
 
-        $units = Unit::where('is_active', true)->where('level', '!=', 'foundation')->get();
+        $units = Unit::where('is_active', true)
+            ->where('level', '!=', 'foundation')
+            ->when($unitId, fn ($q) => $q->where('id', $unitId))
+            ->orderBy('id')
+            ->get();
         $academicYears = AcademicYear::where('is_active', true)->get();
 
         $feeComponentsQuery = FeeComponent::where('is_active', true);
@@ -84,21 +88,27 @@ class InvoiceController extends Controller
             'due_date' => ['nullable', 'date'],
         ]);
 
+        abort_unless(auth()->user()->canAccessUnit((int) $validated['unit_id']), 403, 'Anda tidak memiliki akses untuk unit sekolah tersebut.');
+
         $dueDate = ! empty($validated['due_date']) ? Carbon::parse($validated['due_date']) : null;
 
-        $result = $action->execute(
-            unitId: (int) $validated['unit_id'],
-            academicYearId: (int) $validated['academic_year_id'],
-            month: (int) $validated['month'],
-            year: (int) $validated['year'],
-            dueDate: $dueDate,
-            createdByUserId: auth()->id()
-        );
+        try {
+            $result = $action->execute(
+                unitId: (int) $validated['unit_id'],
+                academicYearId: (int) $validated['academic_year_id'],
+                month: (int) $validated['month'],
+                year: (int) $validated['year'],
+                dueDate: $dueDate,
+                createdByUserId: auth()->id()
+            );
 
-        return redirect()->route('invoices.index')->with(
-            'success',
-            "Tagihan bulanan berhasil digenerate! {$result['created_count']} tagihan baru dibuat, {$result['skipped_count']} dilewati (duplikat)."
-        );
+            return redirect()->route('invoices.index')->with(
+                'success',
+                "Tagihan bulanan berhasil digenerate! {$result['created_count']} tagihan baru dibuat, {$result['skipped_count']} dilewati (duplikat)."
+            );
+        } catch (\Throwable $e) {
+            return back()->withInput()->withErrors(['error' => $e->getMessage()]);
+        }
     }
 
     public function generateIncidental(Request $request, GenerateIncidentalInvoicesAction $action): RedirectResponse
@@ -112,20 +122,27 @@ class InvoiceController extends Controller
             'notes' => ['nullable', 'string', 'max:255'],
         ]);
 
+        $component = FeeComponent::findOrFail((int) $validated['fee_component_id']);
+        abort_unless(auth()->user()->canAccessUnit((int) $component->unit_id), 403, 'Anda tidak memiliki akses untuk komponen biaya unit tersebut.');
+
         $dueDate = ! empty($validated['due_date']) ? Carbon::parse($validated['due_date']) : null;
 
-        $created = $action->execute(
-            feeComponentId: (int) $validated['fee_component_id'],
-            studentIds: array_map('intval', $validated['student_ids']),
-            customAmount: ! empty($validated['custom_amount']) ? (int) $validated['custom_amount'] : null,
-            dueDate: $dueDate,
-            notes: $validated['notes'] ?? null,
-            createdByUserId: auth()->id()
-        );
+        try {
+            $created = $action->execute(
+                feeComponentId: (int) $validated['fee_component_id'],
+                studentIds: array_map('intval', $validated['student_ids']),
+                customAmount: ! empty($validated['custom_amount']) ? (int) $validated['custom_amount'] : null,
+                dueDate: $dueDate,
+                notes: $validated['notes'] ?? null,
+                createdByUserId: auth()->id()
+            );
 
-        return redirect()->route('invoices.index')->with(
-            'success',
-            "Berhasil membuat {$created->count()} tagihan insidentil untuk siswa terpilih."
-        );
+            return redirect()->route('invoices.index')->with(
+                'success',
+                "Berhasil membuat {$created->count()} tagihan insidentil untuk siswa terpilih."
+            );
+        } catch (\Throwable $e) {
+            return back()->withInput()->withErrors(['error' => $e->getMessage()]);
+        }
     }
 }

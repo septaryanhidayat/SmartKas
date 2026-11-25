@@ -76,7 +76,7 @@ class User extends Authenticatable
 
     public function canAccessUnit(?int $targetUnitId): bool
     {
-        if ($this->isSuperAdmin() || $this->isTreasurer()) {
+        if ($this->isSuperAdmin() || $this->isTreasurer() || $this->can('view-all-units')) {
             return true;
         }
 
@@ -85,5 +85,61 @@ class User extends Authenticatable
         }
 
         return (int) $this->unit_id === (int) $targetUnitId;
+    }
+
+    /**
+     * Human-readable institutional title for UI badges and greetings.
+     */
+    public function displayRoleTitle(): string
+    {
+        if ($this->isSuperAdmin()) {
+            return 'Ketua Yayasan';
+        }
+
+        if ($this->isTreasurer()) {
+            return 'Bendahara Yayasan';
+        }
+
+        if ($this->isPrincipal()) {
+            return $this->unit ? "Kepala Sekolah {$this->unit->code->value}" : 'Kepala Sekolah';
+        }
+
+        if ($this->isFinanceAdmin()) {
+            if (! $this->unit_id) {
+                return 'Admin Yayasan (Pusat Pembayaran)';
+            }
+
+            return "Admin Keuangan {$this->unit->code->value}";
+        }
+
+        return $this->roles->first()?->name ?? 'Pengguna';
+    }
+
+    /**
+     * Descriptive role subtitle for executive dashboard header.
+     */
+    public function displayRoleDescription(): string
+    {
+        if ($this->isSuperAdmin()) {
+            return 'Ketua Yayasan Generasi Robbani • Pengawas Utama 4 Unit Sekolah';
+        }
+
+        if ($this->isTreasurer()) {
+            return 'Bendahara Yayasan • Otorisator Pengeluaran & Kas Terpusat';
+        }
+
+        if ($this->isPrincipal()) {
+            return $this->unit ? "Kepala Sekolah • {$this->unit->name}" : 'Kepala Sekolah Unit';
+        }
+
+        if ($this->isFinanceAdmin()) {
+            if (! $this->unit_id) {
+                return 'Admin Yayasan • Pusat Pembayaran Siswa Seluruh Unit';
+            }
+
+            return "Admin Keuangan • {$this->unit->name}";
+        }
+
+        return $this->unit?->name ?? 'Yayasan Generasi Robbani Sumatera Selatan';
     }
 }

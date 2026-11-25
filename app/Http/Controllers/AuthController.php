@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -18,17 +17,7 @@ class AuthController extends Controller
             return redirect()->route('dashboard');
         }
 
-        $demoUsers = User::with(['unit', 'roles'])->orderByRaw("CASE 
-            WHEN email = 'superadmin@sit.sch.id' THEN 1
-            WHEN email = 'bendahara@sit.sch.id' THEN 2
-            WHEN email = 'admin.yayasan@sit.sch.id' THEN 3
-            WHEN email LIKE 'admin.tkit%' THEN 4
-            WHEN email LIKE 'admin.sdit%' THEN 5
-            WHEN email LIKE 'admin.smpit%' THEN 6
-            WHEN email LIKE 'admin.smait%' THEN 7
-            ELSE 8 END")->get();
-
-        return view('auth.login', compact('demoUsers'));
+        return view('auth.login');
     }
 
     public function login(Request $request): RedirectResponse
@@ -36,25 +25,24 @@ class AuthController extends Controller
         $credentials = $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required'],
+        ], [
+            'email.required' => 'Alamat email wajib diisi.',
+            'email.email' => 'Format alamat email tidak valid.',
+            'password.required' => 'Kata sandi wajib diisi.',
         ]);
 
-        if (Auth::attempt($credentials, (bool) $request->boolean('remember'))) {
+        if (Auth::attempt([...$credentials, 'is_active' => true], (bool) $request->boolean('remember'))) {
             $request->session()->regenerate();
 
-            return redirect()->intended(route('dashboard'));
+            $user = Auth::user();
+
+            return redirect()->intended(route('dashboard'))
+                ->with('success', "Selamat datang, {$user->name}!");
         }
 
         return back()->withErrors([
-            'email' => 'Kombinasi email dan password yang Anda masukkan tidak sesuai.',
+            'email' => 'Kombinasi email dan kata sandi yang Anda masukkan tidak sesuai atau akun tidak aktif.',
         ])->onlyInput('email');
-    }
-
-    public function quickLogin(Request $request, User $user): RedirectResponse
-    {
-        Auth::login($user);
-        $request->session()->regenerate();
-
-        return redirect()->route('dashboard')->with('success', "Selamat datang, {$user->name}!");
     }
 
     public function logout(Request $request): RedirectResponse
@@ -63,6 +51,6 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('login')->with('info', 'Anda telah berhasil logout.');
+        return redirect()->route('login')->with('info', 'Anda telah keluar dari sesi SmartKas.');
     }
 }

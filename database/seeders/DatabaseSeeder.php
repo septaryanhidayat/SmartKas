@@ -127,7 +127,7 @@ class DatabaseSeeder extends Seeder
             'level' => UnitLevel::TK,
             'address' => 'Jl. Pangeran Ayin No. 88A, Sako, Palembang, Sumatera Selatan',
             'phone' => '0711-820124',
-            'principal_name' => 'Ustadzah Rojanah, S.E.',
+            'principal_name' => 'Ani',
             'is_active' => true,
         ]);
 
@@ -137,7 +137,7 @@ class DatabaseSeeder extends Seeder
             'level' => UnitLevel::SD,
             'address' => 'Jl. Pangeran Ayin No. 88B, Sako, Palembang, Sumatera Selatan',
             'phone' => '0711-820125',
-            'principal_name' => 'Ustadzah Risma, S.Pd',
+            'principal_name' => 'Nur',
             'is_active' => true,
         ]);
 
@@ -147,7 +147,7 @@ class DatabaseSeeder extends Seeder
             'level' => UnitLevel::SMP,
             'address' => 'Jl. Pangeran Ayin No. 88C, Sako, Palembang, Sumatera Selatan',
             'phone' => '0711-820126',
-            'principal_name' => 'Ustadz Ahmad Zaki, M.Pd.',
+            'principal_name' => 'Tia',
             'is_active' => true,
         ]);
 
@@ -157,18 +157,18 @@ class DatabaseSeeder extends Seeder
             'level' => UnitLevel::SMA,
             'address' => 'Jl. Pangeran Ayin No. 88D, Sako, Palembang, Sumatera Selatan',
             'phone' => '0711-820127',
-            'principal_name' => 'Ustadz Hasan Basri, Lc., M.A.',
+            'principal_name' => 'Kepala Sekolah SMAIT Robbani',
             'is_active' => true,
         ]);
 
-        // 4. Create Official Personnel Users (Official Names requested by User)
+        // 4. Create Official Personnel Users
         $defaultPassword = Hash::make('password123');
 
         // Ketua Yayasan: Sughesti Wulandari, S.Pd (Superadmin)
         $superadmin = User::create([
             'unit_id' => null,
             'name' => 'Sughesti Wulandari, S.Pd',
-            'email' => 'superadmin@sit.sch.id', // Keep alias email for tests while displaying official title
+            'email' => 'sughesti@sitrobbani.sch.id',
             'password' => $defaultPassword,
             'phone' => '628127100001',
             'is_active' => true,
@@ -179,7 +179,7 @@ class DatabaseSeeder extends Seeder
         $treasurer = User::create([
             'unit_id' => null,
             'name' => 'Dessy Aprianty, S.E.',
-            'email' => 'bendahara@sit.sch.id',
+            'email' => 'dessy@sitrobbani.sch.id',
             'password' => $defaultPassword,
             'phone' => '628127100002',
             'is_active' => true,
@@ -190,7 +190,7 @@ class DatabaseSeeder extends Seeder
         $adminYayasan = User::create([
             'unit_id' => null, // Pusat Yayasan: can access and receive payments across all units
             'name' => 'Anis Monica, S.H.',
-            'email' => 'admin.yayasan@sit.sch.id',
+            'email' => 'anis@sitrobbani.sch.id',
             'password' => $defaultPassword,
             'phone' => '628127100003',
             'is_active' => true,
@@ -199,40 +199,37 @@ class DatabaseSeeder extends Seeder
         $adminYayasan->givePermissionTo('view-all-units');
 
         // Unit Users (Principals and Designated Unit Admins)
-        // Admin unit TK: Rojanah, S.E.
-        // Admin unit SD: Risma, S.Pd
-        // Admin unit SMP: Adelia Jesika, S.Pd
         $unitAdminsConfig = [
             [
                 'unit' => $tkit,
                 'admin_name' => 'Rojanah, S.E.',
-                'admin_email' => 'admin.tkit@sit.sch.id',
-                'kepsek_name' => 'Kepala Sekolah TKIT Robbani',
-                'kepsek_email' => 'kepsek.tkit@sit.sch.id',
+                'admin_email' => 'tk@sitrobbani.sch.id',
+                'kepsek_name' => 'Ani',
+                'kepsek_email' => 'ani@sitrobbani.sch.id',
                 'phone_admin' => '628127100010',
             ],
             [
                 'unit' => $sdit,
                 'admin_name' => 'Risma, S.Pd',
-                'admin_email' => 'admin.sdit@sit.sch.id',
-                'kepsek_name' => 'Kepala Sekolah SDIT Robbani',
-                'kepsek_email' => 'kepsek.sdit@sit.sch.id',
+                'admin_email' => 'sd@sitrobbani.sch.id',
+                'kepsek_name' => 'Nur',
+                'kepsek_email' => 'nur@sitrobbani.sch.id',
                 'phone_admin' => '628127100020',
             ],
             [
                 'unit' => $smpit,
                 'admin_name' => 'Adelia Jesika, S.Pd',
-                'admin_email' => 'admin.smpit@sit.sch.id',
-                'kepsek_name' => 'Kepala Sekolah SMPIT Robbani',
-                'kepsek_email' => 'kepsek.smpit@sit.sch.id',
+                'admin_email' => 'smp@sitrobbani.sch.id',
+                'kepsek_name' => 'Tia',
+                'kepsek_email' => 'tia@sitrobbani.sch.id',
                 'phone_admin' => '628127100030',
             ],
             [
                 'unit' => $smait,
                 'admin_name' => 'Admin Keuangan SMAIT Robbani',
-                'admin_email' => 'admin.smait@sit.sch.id',
+                'admin_email' => 'sma@sitrobbani.sch.id',
                 'kepsek_name' => 'Kepala Sekolah SMAIT Robbani',
-                'kepsek_email' => 'kepsek.smait@sit.sch.id',
+                'kepsek_email' => 'kepsek.sma@sitrobbani.sch.id',
                 'phone_admin' => '628127100040',
             ],
         ];

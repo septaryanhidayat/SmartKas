@@ -8,12 +8,17 @@ use App\Enums\InvoiceStatus;
 use App\Models\FeeComponent;
 use App\Models\Invoice;
 use App\Models\Student;
+use App\Services\ClosingPeriodService;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class GenerateIncidentalInvoicesAction
 {
+    public function __construct(
+        protected ClosingPeriodService $closingPeriodService
+    ) {}
+
     /**
      * Generate incidental or annual invoices for specified students.
      *
@@ -32,6 +37,8 @@ class GenerateIncidentalInvoicesAction
         $unit = $component->unit;
         $due = $dueDate ?? Carbon::now()->addDays(14);
         $creatorId = $createdByUserId ?? auth()->id() ?? 1;
+
+        $this->closingPeriodService->ensurePeriodIsOpen($unit->id, Carbon::now());
 
         $students = Student::query()
             ->withoutGlobalScope('unit_scope')

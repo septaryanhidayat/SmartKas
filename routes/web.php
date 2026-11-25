@@ -17,7 +17,6 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [AuthController::class, 'login']);
-    Route::post('/quick-login/{user}', [AuthController::class, 'quickLogin'])->name('quick-login');
 });
 
 // Authenticated Routes

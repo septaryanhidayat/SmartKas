@@ -110,7 +110,7 @@
                                 @foreach($unpaidInvoices as $index => $inv)
                                     <tr class="hover:bg-slate-50/80 transition" x-data="{ checked: true, amount: {{ $inv->remaining_amount }} }">
                                         <td class="py-3 px-4 text-center">
-                                            <input type="checkbox" x-model="checked" :name="'items[' + {{ $index }} + '][invoice_id]'" value="{{ $inv->id }}" class="rounded text-emerald-600 focus:ring-emerald-500 w-4 h-4 cursor-pointer item-checkbox">
+                                            <input type="checkbox" x-model="checked" name="items[{{ $index }}][invoice_id]" value="{{ $inv->id }}" class="rounded text-teal-600 focus:ring-teal-500 w-4 h-4 cursor-pointer item-checkbox">
                                         </td>
                                         <td class="py-3 px-4 font-mono font-bold text-slate-800">{{ $inv->invoice_number }}</td>
                                         <td class="py-3 px-4 font-semibold text-slate-900">
@@ -123,8 +123,8 @@
                                         <td class="py-3 px-4 text-right font-medium text-slate-700">{{ format_rupiah($inv->net_amount) }}</td>
                                         <td class="py-3 px-4 text-right font-bold text-amber-700">{{ format_rupiah($inv->remaining_amount) }}</td>
                                         <td class="py-3 px-4 text-right">
-                                            <input type="number" :name="'items[' + {{ $index }} + '][amount]'" x-model.number="amount" :disabled="!checked" max="{{ $inv->remaining_amount }}" min="1"
-                                                class="w-full text-right font-bold text-xs rounded-xl border border-slate-300 bg-white px-3 py-1.5 focus:ring-2 focus:ring-emerald-500 disabled:bg-slate-100 disabled:text-slate-400">
+                                            <input type="number" name="items[{{ $index }}][amount]" x-model.number="amount" :disabled="!checked" max="{{ $inv->remaining_amount }}" min="1"
+                                                class="w-full text-right font-bold text-xs rounded-xl border border-slate-300 bg-white px-3 py-1.5 focus:ring-2 focus:ring-teal-500 disabled:bg-slate-100 disabled:text-slate-400">
                                         </td>
                                     </tr>
                                 @endforeach

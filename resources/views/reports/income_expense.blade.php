@@ -58,7 +58,7 @@
     <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
         <div class="p-5 bg-slate-50 border-b border-slate-200">
             <h3 class="font-bold text-base text-slate-900">
-                {{ $report['unit'] ? $report['unit']->name : 'Konsolidasi Seluruh Unit Yayasan SIT' }}
+                {{ $report['unit'] ? $report['unit']->name : 'Konsolidasi Yayasan Generasi Robbani Sumatera Selatan' }}
             </h3>
             <p class="text-xs text-slate-500 mt-0.5">Periode: {{ $report['start_date']->translatedFormat('d F Y') }} s/d {{ $report['end_date']->translatedFormat('d F Y') }}</p>
         </div>
