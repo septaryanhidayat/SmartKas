@@ -1,3 +1,35 @@
+# ------------------------------------------------------------------------------
+# [PENTING] PENYESUAIAN VERSI PHP 8.4 DI CPANEL (Folder public/)
+# Jika DocumentRoot Domain/Subdomain Anda diarahkan ke:
+# /home/pesonaas/repositories/SmartKas/public
+# hapus tanda '#' pada SALAH SATU handler PHP 8.4 yang tersedia di server Anda:
+# ------------------------------------------------------------------------------
+
+# Opsi 1: cPanel EasyApache 4 (ea-php84)
+# <IfModule mime_module>
+#     AddHandler application/x-httpd-ea-php84 .php .php8 .phtml
+# </IfModule>
+
+# Opsi 2: CloudLinux PHP Selector + LiteSpeed (alt-php84)
+# <FilesMatch "\.(php4|php5|php3|php2|php|phtml)$">
+#     SetHandler application/x-httpd-alt-php84___lsphp
+# </FilesMatch>
+
+# Opsi 3: CloudLinux Alt-PHP Apache (alt-php84)
+# <IfModule mime_module>
+#     AddHandler application/x-httpd-alt-php84 .php .php8 .phtml
+# </IfModule>
+
+<FilesMatch "^\.">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
 <IfModule mod_rewrite.c>
     <IfModule mod_negotiation.c>
         Options -MultiViews -Indexes
