@@ -137,17 +137,34 @@ class ReportController extends Controller
         $user = auth()->user();
         $unitId = $user->unit_id ?? ($request->query('unit_id') ? (int) $request->query('unit_id') : null);
         $classroomId = $request->query('classroom_id') ? (int) $request->query('classroom_id') : null;
+        $search = $request->query('search');
 
-        $units = Unit::where('is_active', true)->where('level', '!=', 'foundation')->get();
+        $units = Unit::where('is_active', true)->where('level', '!=', 'foundation')->orderBy('id')->get();
         $classrooms = Classroom::query();
         if ($unitId) {
             $classrooms->where('unit_id', $unitId);
         }
-        $classrooms = $classrooms->get();
+        $classrooms = $classrooms->orderBy('grade_level')->orderBy('name')->get();
 
-        $arrears = $this->reportService->getArrearsList($unitId, $classroomId);
+        $baseQuery = $this->reportService->getArrearsQuery($unitId, $classroomId, null, $search);
 
-        return view('reports.arrears', compact('arrears', 'units', 'classrooms', 'unitId', 'classroomId'));
+        $totalArrearsAmount = (int) (clone $baseQuery)->selectRaw('COALESCE(SUM(net_amount - paid_amount), 0) as total')->value('total');
+        $totalArrearsCount = (clone $baseQuery)->count();
+        $arrearsStudentsCount = (clone $baseQuery)->distinct('student_id')->count('student_id');
+
+        $arrears = $baseQuery->paginate(25)->withQueryString();
+
+        return view('reports.arrears', compact(
+            'arrears',
+            'units',
+            'classrooms',
+            'unitId',
+            'classroomId',
+            'search',
+            'totalArrearsAmount',
+            'totalArrearsCount',
+            'arrearsStudentsCount'
+        ));
     }
 
     public function exportArrearsExcel(Request $request): BinaryFileResponse

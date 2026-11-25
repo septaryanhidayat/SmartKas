@@ -15,9 +15,25 @@
         </a>
     </div>
 
+    <!-- Summary Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs">
+            <span class="text-[11px] font-bold text-slate-400 uppercase">Total Sisa Piutang / Tunggakan</span>
+            <div class="text-xl font-black text-amber-700 mt-1 font-mono">{{ format_rupiah($totalArrearsAmount) }}</div>
+        </div>
+        <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs">
+            <span class="text-[11px] font-bold text-slate-400 uppercase">Jumlah Tagihan Belum Lunas</span>
+            <div class="text-xl font-black text-slate-900 mt-1 font-mono">{{ number_format($totalArrearsCount, 0, ',', '.') }} Lembar</div>
+        </div>
+        <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs">
+            <span class="text-[11px] font-bold text-slate-400 uppercase">Total Siswa Memiliki Tunggakan</span>
+            <div class="text-xl font-black text-[#0B3B6F] mt-1 font-mono">{{ number_format($arrearsStudentsCount, 0, ',', '.') }} Siswa</div>
+        </div>
+    </div>
+
     <!-- Filter Bar -->
     <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs">
-        <form method="GET" action="{{ route('reports.arrears') }}" class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <form method="GET" action="{{ route('reports.arrears') }}" class="grid grid-cols-1 sm:grid-cols-4 gap-3">
             @if(!auth()->user()->unit_id)
                 <div>
                     <label class="block text-[11px] font-bold text-slate-500 uppercase mb-1">Unit Sekolah</label>
@@ -30,7 +46,7 @@
                 </div>
             @endif
 
-            <div class="{{ auth()->user()->unit_id ? 'sm:col-span-2' : '' }}">
+            <div>
                 <label class="block text-[11px] font-bold text-slate-500 uppercase mb-1">Kelas</label>
                 <select name="classroom_id" class="w-full text-xs font-medium rounded-xl border border-slate-200 bg-slate-50 px-3 py-2">
                     <option value="">-- Semua Kelas --</option>
@@ -40,10 +56,18 @@
                 </select>
             </div>
 
-            <div class="flex items-end">
+            <div class="{{ auth()->user()->unit_id ? 'sm:col-span-2' : '' }}">
+                <label class="block text-[11px] font-bold text-slate-500 uppercase mb-1">Cari Siswa / No. Tagihan</label>
+                <input type="text" name="search" value="{{ $search ?? '' }}" placeholder="Nama siswa, NIS, atau kode tagihan..." class="w-full text-xs font-medium rounded-xl border border-slate-200 bg-slate-50 px-3 py-2">
+            </div>
+
+            <div class="flex items-end gap-2">
                 <button type="submit" class="w-full py-2 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition">
                     Filter Tunggakan
                 </button>
+                <a href="{{ route('reports.arrears') }}" class="py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-semibold">
+                    Reset
+                </a>
             </div>
         </form>
     </div>
@@ -116,6 +140,12 @@
                 </tbody>
             </table>
         </div>
+
+        @if($arrears->hasPages())
+            <div class="p-4 border-t border-slate-200">
+                {{ $arrears->links() }}
+            </div>
+        @endif
     </div>
 
 </div>

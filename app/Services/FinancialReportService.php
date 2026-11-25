@@ -212,18 +212,19 @@ class FinancialReportService
     }
 
     /**
-     * Dashboard & Laporan Tunggakan Siswa (Arrears / Piutang SPP).
+     * Query builder for Student Arrears (Piutang SPP).
      */
-    public function getArrearsList(
+    public function getArrearsQuery(
         ?int $unitId = null,
         ?int $classroomId = null,
         ?int $feeComponentId = null,
-        ?int $minMonthsOverdue = null
-    ): Collection {
+        ?string $search = null
+    ) {
         $query = Invoice::withoutGlobalScope('unit_scope')
             ->whereIn('status', [InvoiceStatus::UNPAID, InvoiceStatus::PARTIAL])
             ->with(['student.classroom', 'feeComponent', 'unit'])
-            ->orderBy('due_date', 'asc');
+            ->orderBy('due_date', 'asc')
+            ->orderBy('id', 'asc');
 
         if ($unitId) {
             $query->where('unit_id', $unitId);
@@ -237,6 +238,25 @@ class FinancialReportService
             $query->whereHas('student', fn ($q) => $q->where('classroom_id', $classroomId));
         }
 
-        return $query->get();
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('invoice_number', 'like', "%{$search}%")
+                    ->orWhereHas('student', fn ($sq) => $sq->where('name', 'like', "%{$search}%")->orWhere('nis', 'like', "%{$search}%"));
+            });
+        }
+
+        return $query;
+    }
+
+    /**
+     * Dashboard & Laporan Tunggakan Siswa (Arrears / Piutang SPP).
+     */
+    public function getArrearsList(
+        ?int $unitId = null,
+        ?int $classroomId = null,
+        ?int $feeComponentId = null,
+        ?int $minMonthsOverdue = null
+    ): Collection {
+        return $this->getArrearsQuery($unitId, $classroomId, $feeComponentId)->get();
     }
 }

@@ -160,7 +160,7 @@ class DashboardController extends Controller
                 ->selectRaw('SUM(net_amount - paid_amount) as total')
                 ->value('total');
 
-            $collectionRate = $uMonthlyBilled > 0 ? min(100.0, round(($uMonthlyPaid / $uMonthlyBilled) * 100, 1)) : 100.0;
+            $collectionRate = $uMonthlyBilled > 0 ? min(100.0, round(($uMonthlyPaid / $uMonthlyBilled) * 100, 1)) : 0.0;
 
             $unitSummaries[] = [
                 'unit' => $u,

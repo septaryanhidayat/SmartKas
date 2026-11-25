@@ -23,8 +23,22 @@
 
     <!-- Filter Bar -->
     <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs">
-        <form method="GET" action="{{ route('reports.cash-ledger') }}" class="grid grid-cols-1 sm:grid-cols-4 gap-3">
-            <div>
+        <form method="GET" action="{{ route('reports.cash-ledger') }}" class="grid grid-cols-1 sm:grid-cols-5 gap-3">
+            @if(!auth()->user()->unit_id)
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-500 uppercase mb-1">Unit Sekolah</label>
+                    <select name="unit_id" class="w-full text-xs font-medium rounded-xl border border-slate-200 bg-slate-50 px-3 py-2">
+                        <option value="">-- Semua Unit --</option>
+                        @foreach($units->where('level', '!=', 'foundation') as $u)
+                            <option value="{{ $u->id }}" {{ (string)$unitId === (string)$u->id ? 'selected' : '' }}>
+                                {{ $u->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+            @endif
+
+            <div class="{{ auth()->user()->unit_id ? 'sm:col-span-2' : '' }}">
                 <label class="block text-[11px] font-bold text-slate-500 uppercase mb-1">Akun Kas / Bank</label>
                 <select name="cash_account_id" class="w-full text-xs font-medium rounded-xl border border-slate-200 bg-slate-50 px-3 py-2">
                     <option value="">-- Semua Akun Kas & Bank --</option>

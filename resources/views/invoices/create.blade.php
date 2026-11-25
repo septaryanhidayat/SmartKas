@@ -110,11 +110,16 @@
                         </div>
                     </div>
 
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Pilih Siswa Penerima Tagihan *</label>
-                        <div class="max-h-48 overflow-y-auto border border-slate-200 rounded-xl p-3 bg-slate-50 space-y-1.5 text-xs">
+                    <div x-data="{ studentFilter: '' }">
+                        <div class="flex items-center justify-between gap-2 mb-1.5">
+                            <label class="block text-xs font-bold text-slate-700 uppercase">Pilih Siswa Penerima Tagihan *</label>
+                            <input type="text" x-model="studentFilter" placeholder="Cari cepat nama / NIS..." class="text-xs rounded-lg border border-slate-200 px-2.5 py-1 w-52 focus:outline-none focus:ring-2 focus:ring-teal-500">
+                        </div>
+                        <div class="max-h-52 overflow-y-auto border border-slate-200 rounded-xl p-3 bg-slate-50 space-y-1.5 text-xs">
                             @foreach($students as $st)
-                                <label class="flex items-center gap-2.5 hover:bg-white p-1 rounded cursor-pointer">
+                                <label data-search="{{ strtolower($st->name . ' ' . $st->nis . ' ' . $st->unit->code->value) }}"
+                                    x-show="!studentFilter || $el.dataset.search.includes(studentFilter.toLowerCase())"
+                                    class="flex items-center gap-2.5 hover:bg-white p-1.5 rounded cursor-pointer">
                                     <input type="checkbox" name="student_ids[]" value="{{ $st->id }}" class="rounded text-emerald-600 focus:ring-emerald-500">
                                     <span class="font-bold text-slate-800">{{ $st->name }}</span>
                                     <span class="text-slate-400 font-mono">({{ $st->nis }} - {{ $st->unit->code->value }} / {{ $st->classroom?->name }})</span>

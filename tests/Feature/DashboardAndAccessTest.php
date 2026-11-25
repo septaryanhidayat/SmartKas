@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Enums\UnitCode;
+use App\Models\Unit;
 use App\Models\User;
 use Database\Seeders\DatabaseSeeder;
 
@@ -58,4 +60,26 @@ it('renders core financial pages cleanly for authorized users', function () {
     $this->actingAs($bendahara)->get(route('reports.arrears'))->assertStatus(200);
     $this->actingAs($bendahara)->get(route('closing-periods.index'))->assertStatus(200);
     $this->actingAs($bendahara)->get(route('audit-logs.index'))->assertStatus(200);
+});
+
+it('supports paginated arrears search and unit isolation overrides safely', function () {
+    $bendahara = User::where('email', 'dessy@sitrobbani.sch.id')->firstOrFail();
+    $tkAdmin = User::where('email', 'tk@sitrobbani.sch.id')->firstOrFail();
+    $sditUnit = Unit::where('code', UnitCode::SDIT)->firstOrFail();
+
+    $this->actingAs($bendahara)
+        ->get(route('reports.arrears', ['search' => 'NON_EXISTENT_STUDENT_XYZ']))
+        ->assertStatus(200)
+        ->assertSee('0 Lembar');
+
+    $this->actingAs($bendahara)
+        ->get(route('reports.cash-ledger', ['unit_id' => $sditUnit->id]))
+        ->assertStatus(200)
+        ->assertSee('Buku Kas Umum');
+
+    $this->actingAs($tkAdmin)
+        ->get(route('dashboard', ['unit_id' => $sditUnit->id]))
+        ->assertStatus(200)
+        ->assertSee('KB/TKIT Robbani')
+        ->assertDontSee('SDIT Robbani');
 });
