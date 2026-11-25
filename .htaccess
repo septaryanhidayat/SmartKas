@@ -48,7 +48,7 @@ Options -Indexes
     RewriteEngine On
 
     # Blokir akses HTTP ke folder internal Laravel
-    RewriteRule ^(app|bootstrap|config|database|resources|routes|storage|tests|vendor)/ - [F,L]
+    RewriteRule ^(app|bootstrap|config|database|resources|routes|storage|tests|vendor)(/|$) - [F,L]
 
     # Teruskan Header Authorization & X-XSRF-Token ke folder public/
     RewriteCond %{HTTP:Authorization} .
@@ -57,7 +57,12 @@ Options -Indexes
     RewriteCond %{HTTP:x-xsrf-token} .
     RewriteRule .* - [E=HTTP_X_XSRF_TOKEN:%{HTTP:X-XSRF-Token}]
 
-    # Arahkan semua request web ke public/ jika DocumentRoot masih menunjuk root repo
+    # Jika asset/file fisik tersedia di dalam public/ (css, js, font, gambar), layani langsung
     RewriteCond %{REQUEST_URI} !^/public/
+    RewriteCond %{DOCUMENT_ROOT}/public/$1 -f
     RewriteRule ^(.*)$ public/$1 [L]
+
+    # Arahkan halaman root (/) dan seluruh route Laravel (/login, dll.) ke public/index.php
+    RewriteCond %{REQUEST_URI} !^/public/
+    RewriteRule ^(.*)$ public/index.php [L]
 </IfModule>
